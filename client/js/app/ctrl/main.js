@@ -1,7 +1,6 @@
 /* global app */
 app.controller('mainCtrl',
-  function ($scope) {
+  function () {
     'use strict';
-    $scope.msg = 'Here\'s the index. Publicly available to all.';
   }
 );
