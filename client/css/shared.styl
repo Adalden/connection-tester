@@ -1,0 +1,39 @@
+radial-grad(start, end)
+  background-color: start
+  background: -webkit-gradient(radial, center 0, 0, center 0, 100, color-stop(0%, start), color-stop(100%, end)) no-repeat
+  background: -webkit-radial-gradient(center 0, circle cover, start, end) no-repeat
+  background: -moz-radial-gradient(center 0, circle cover, start, end) no-repeat
+  background: -ms-radial-gradient(center 0, circle cover, start, end) no-repeat
+  background: -o-radial-gradient(center 0, circle cover, start, end) no-repeat
+  background: radial-gradient(center 0, circle cover, start, end) no-repeat
+
+linear-grad(start, end)
+  background-color: start
+  background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(start), to(end))
+  background: -webkit-linear-gradient(top, start, end) no-repeat
+  background: -moz-linear-gradient(top, start, end) no-repeat
+  background: -ms-linear-gradient(top, start, end) no-repeat
+  background: -o-linear-gradient(top, start, end) no-repeat
+  background: linear-gradient(top, start, end) no-repeat
+
+box-shadow()
+  -webkit-box-shadow: arguments
+  -moz-box-shadow: arguments
+  box-shadow: arguments
+
+transform()
+  -webkit-transform: arguments
+  -moz-transform: arguments
+  -ms-transform: arguments
+  -o-transform: arguments
+  transform: arguments
+
+rotate-item(degrees)
+  transform: rotate(degrees)
+
+transition()
+  -webkit-transition: arguments
+  -moz-transition: arguments
+  -ms-transition: arguments
+  -o-transition: arguments
+  transition: arguments

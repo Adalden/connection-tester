@@ -1,0 +1,16 @@
+<div class="navbar">
+  <div class="navbar-inner">
+    <a href="#" class="brand">Angular App</a>
+    <ul class="nav">
+      <li ng-repeat="item in nav | filter:security" ng-class="{active:item.state==state.current.name}">
+        <a href="#{{item.url}}">{{item.name}}</a>
+      </li>
+    </ul>
+
+    <ul class="nav pull-right">
+      <li ng-class="{active:state.current.name=='login'}">
+        <a ng-click="logInOut(lMsg)">{{lMsg}}</a>
+      </li>
+    </ul>
+  </div>
+</div>

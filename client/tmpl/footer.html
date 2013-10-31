@@ -1,0 +1,5 @@
+<div id="copyright">Site designed and coded by <a href="http://www.dallinosmun.com">Dallin Osmun</a> &copy; {{year}}</div>
+
+<div id="alerts">
+  <div alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index, alert)">{{alert.msg}}</div>
+</div>
