@@ -13,8 +13,8 @@ nav = [
     state:  'protected',
     url:    '/protected',
     tmpl:   'tmpl/protected.html',
-    ctrl:   'protectedCtrl',
-    acl:    'logged-in'
+    ctrl:   'protectedCtrl'
+    // acl:    'logged-in'
   },
   {
     name:   'Login',
