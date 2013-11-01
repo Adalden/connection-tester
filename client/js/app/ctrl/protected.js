@@ -1,7 +1,7 @@
 /* global app */
 app.controller('protectedCtrl',
   function ($scope) {
-    'use strict';
+    'use strict'
     // set up SVG for D3
     var width  = 960,
         height = 500,
