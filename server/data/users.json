@@ -1,0 +1,7 @@
+{
+  "admin": {
+    "name": "admin",
+    "pass": "admin",
+    "acl": [ "admin", "engineer", "tester" ]
+  }
+}
