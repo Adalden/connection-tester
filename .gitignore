@@ -6,3 +6,4 @@ config/localdev.js
 npm-debug.log
 
 build/
+client/css/app.css
