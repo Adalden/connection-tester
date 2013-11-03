@@ -25,6 +25,12 @@ module.exports = function (app) {
     user.update
   );
 
+  app.delete('/user/:id',
+    loggedIn,
+    hasACL('admin'),
+    user.remove
+  );
+
   app.get('/logout',
     loggedIn,
     user.logout

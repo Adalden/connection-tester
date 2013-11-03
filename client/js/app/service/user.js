@@ -1,5 +1,5 @@
-/* global app, angular, _ */
-app.factory('user',
+/* global angular, _ */
+angular.module('app').factory('user',
   function ($rootScope, $http, $window) {
     'use strict';
     function User() {

@@ -1,5 +1,5 @@
-/* global app */
-app.controller('footerCtrl',
+/* global angular */
+angular.module('app').controller('footerCtrl',
   function ($scope, alerts) {
     'use strict';
     $scope.year = (new Date()).getFullYear();

@@ -15,12 +15,12 @@ var     fs = require('fs'),
 // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 module.exports = {
-  login: login,
+  login:  login,
   logout: logout,
   create: create,
   update: update,
   remove: remove,
-  get: get,
+  get:    get,
   getAll: getAll
 };
 
@@ -53,9 +53,11 @@ function logout(req, res) {
 }
 
 function create(req, res) {
-  var id = req.body.id;
+  var id = req.body.name;
 
   if (users[id]) return res.fail('User already exists.');
+
+  req.body.pass = hash.generate(req.body.pass);
 
   users[id] = req.body;
 
@@ -63,16 +65,20 @@ function create(req, res) {
     if (err) return res.fail(err);
 
     res.send({
-      success: true
+      success: true,
+      user: users[id]
     });
   });
 }
 
 function update(req, res) {
-  var id = req.body.id;
+  var id = req.body.name;
 
   if (!users[id]) return res.fail('No such user exists.');
 
+  if (!hash.isHashed(req.body.pass)) {
+    req.body.pass = hash.generate(req.body.pass);
+  }
   users[id] = req.body;
 
   _updateUserFile(function (err) {
@@ -85,7 +91,7 @@ function update(req, res) {
 }
 
 function remove(req, res) {
-  var id = req.body.id;
+  var id = req.params.id;
 
   if (!users[id]) return res.fail('No such user exists.');
 
@@ -125,6 +131,5 @@ function _sendUser(req, res) {
 
 function _updateUserFile(cb) {
   // TODO write the file here
-  // fs.writeFile()
-  cb(null);
+  fs.writeFile(__dirname + '/../data/users.json', JSON.stringify(users), cb);
 }
