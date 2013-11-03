@@ -47,6 +47,7 @@ angular.module('app').controller('usersCtrl',
         acl: []
       };
 
+      user.acl = user.acl || {};
       if (user.acl.admin) newUser.acl.push('admin');
       if (user.acl.engineer) newUser.acl.push('engineer');
       if (user.acl.tester) newUser.acl.push('tester');
