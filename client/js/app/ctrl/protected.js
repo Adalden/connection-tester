@@ -11,7 +11,7 @@ app.controller('protectedCtrl',
     nodeSaver.retrieveConfigs(function(res) {
       if (!res) return console.log('Woops something bad happened...');
       $scope.savedConfigs = res; 
-      $scope.curConfig    = res[0];
+      $scope.curConfig    = $scope.savedConfigs[0];
     });
 
     $scope.saveNodeInfo = function(id) {
@@ -55,7 +55,7 @@ app.controller('protectedCtrl',
           $scope.configName = config.name;
           $scope.configSelected = false;
           $scope.selectConfig   = false;
-          restart();
+          resetd3();
         }
       });
     };
@@ -308,6 +308,7 @@ app.controller('protectedCtrl',
     }
 
     function mousedown() {
+      console.log('click');
       // prevent I-bar on drag
       //d3.event.preventDefault();
       
