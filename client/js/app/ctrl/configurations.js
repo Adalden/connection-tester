@@ -51,34 +51,30 @@ angular.module('app').controller('configurationsCtrl',
       $scope.selectConfig   = true;
     };
 
-    $scope.loadSelected = function (configName) {
-      _.each($scope.savedConfigs, function (config) {
-        if (config.name === configName) {
-          $scope.configName = config.name;
-          $scope.configSelected = false;
-          $scope.selectConfig   = false;
+    $scope.loadSelected = function (config) {
+      $scope.configName = config.name;
+      $scope.configSelected = false;
+      $scope.selectConfig   = false;
 
-          $scope.nodes.length = 0;
-          _.each(config.nodes, function (node) {
-            $scope.nodes.push(node);
-          });
-
-          $scope.links.length = 0;
-          _.each(config.links, function (link) {
-            $scope.links.push({
-              source: getById($scope.nodes, link.source),
-              target: getById($scope.nodes, link.target),
-              port: link.port
-            });
-          });
-
-          _.each($scope.nodes, function (node) {
-            node.id = ++lastNodeId;
-          });
-
-          restart();
-        }
+      $scope.nodes.length = 0;
+      _.each(config.nodes, function (node) {
+        $scope.nodes.push(node);
       });
+
+      $scope.links.length = 0;
+      _.each(config.links, function (link) {
+        $scope.links.push({
+          source: getById($scope.nodes, link.source),
+          target: getById($scope.nodes, link.target),
+          port: link.port
+        });
+      });
+
+      _.each($scope.nodes, function (node) {
+        node.id = ++lastNodeId;
+      });
+
+      restart();
     };
 
     function getById(arr, id) {
@@ -309,7 +305,6 @@ angular.module('app').controller('configurationsCtrl',
     }
 
     function mousedown() {
-      console.log('click');
       // prevent I-bar on drag
       //d3.event.preventDefault();
 
