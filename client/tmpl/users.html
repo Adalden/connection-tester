@@ -1,4 +1,11 @@
-<div id="users">
+<div id="users" class="mid-pane">
+  <form class="form-search search-box">
+    <div class="input-prepend">
+      <button type="submit" class="btn">Search</button>
+      <input type="text" class="search-query" ng-model="searchTerm">
+    </div>
+  </form>
+
   <h1>All Users</h1>
 
   <table class="table">
@@ -7,7 +14,7 @@
       <th>Access Control</th>
       <th>Delete</th>
     </tr>
-    <tr ng-repeat="user in users">
+    <tr ng-repeat="user in users | filter:searchTerm">
       <td>{{user.name}}</td>
       <td>
         <label class="checkbox" ng-repeat="(acl, val) in user.acl">

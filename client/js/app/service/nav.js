@@ -6,7 +6,8 @@ nav = [
     state:  'index',
     url:    '/',
     tmpl:   'tmpl/main.html',
-    ctrl:   'mainCtrl'
+    ctrl:   'mainCtrl',
+    hidden: true
   },
   {
     name:   'Users',
@@ -17,7 +18,7 @@ nav = [
     acl:    'admin'
   },
   {
-    name:   'Protected',
+    name:   'Configurations',
     state:  'protected',
     url:    '/protected',
     tmpl:   'tmpl/protected.html',
