@@ -58,9 +58,6 @@ angular.module('app').controller('configurationsCtrl',
           $scope.configName = config.name;
           $scope.configSelected = false;
           $scope.selectConfig   = false;
-<<<<<<< HEAD:client/js/app/ctrl/protected.js
-          resetd3();
-=======
 
           $scope.nodes.length = 0;
           _.each(config.nodes, function (node) {
@@ -81,7 +78,6 @@ angular.module('app').controller('configurationsCtrl',
           });
 
           restart();
->>>>>>> 52b11dbea8ba5b0fce7b15f09f2a3785d0db6deb:client/js/app/ctrl/configurations.js
         }
       });
     };
