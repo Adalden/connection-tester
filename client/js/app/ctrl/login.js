@@ -1,5 +1,5 @@
-/* global app */
-app.controller('loginCtrl',
+/* global angular */
+angular.module('app').controller('loginCtrl',
   function ($scope, $rootScope, $state, user, alerts) {
     'use strict';
 

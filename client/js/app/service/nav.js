@@ -9,12 +9,20 @@ nav = [
     ctrl:   'mainCtrl'
   },
   {
+    name:   'Users',
+    state:  'users',
+    url:    '/users',
+    tmpl:   'tmpl/users.html',
+    ctrl:   'usersCtrl',
+    acl:    'admin'
+  },
+  {
     name:   'Protected',
     state:  'protected',
     url:    '/protected',
     tmpl:   'tmpl/protected.html',
-    ctrl:   'protectedCtrl'
-    // acl:    'logged-in'
+    ctrl:   'protectedCtrl',
+    acl:    'engineer'
   },
   {
     name:   'Login',

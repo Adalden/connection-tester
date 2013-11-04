@@ -1,0 +1,51 @@
+<div id="users">
+  <h1>All Users</h1>
+
+  <table class="table">
+    <tr>
+      <th>Name</th>
+      <th>Access Control</th>
+      <th>Delete</th>
+    </tr>
+    <tr ng-repeat="user in users">
+      <td>{{user.name}}</td>
+      <td>
+        <label class="checkbox" ng-repeat="(acl, val) in user.acl">
+          <input ng-model="user.acl[acl]" ng-change="updateUser(user)" type="checkbox"> {{acl}}
+        </label>
+      </td>
+      <td>
+        <button class="btn btn-danger" ng-click="deleteUser(user)">Delete User</button>
+      </td>
+    </tr>
+  </table>
+
+  <button class="btn btn-success" ng-click="showModal = true">Add User</button>
+</div>
+
+<div modal="showModal" options="modalOpts">
+  <div class="modal-header">
+    <h3>Add New User</h3>
+  </div>
+  <div class="modal-body">
+    <label>Username:</label>
+    <input type="text" ng-model="nu.name">
+    <label>Password:</label>
+    <input type="text" ng-model="nu.pass">
+    <label>Access Control:</label>
+    <label class="checkbox">
+      <input ng-model="nu.acl.admin" type="checkbox"> admin
+    </label>
+    <label class="checkbox">
+      <input ng-model="nu.acl.engineer" type="checkbox"> engineer
+    </label>
+    <label class="checkbox">
+      <input ng-model="nu.acl.tester" type="checkbox"> tester
+    </label>
+
+  </div>
+  <div class="modal-footer">
+    <button class="btn" ng-click="showModal = false">Cancel</button>
+    <button class="btn btn-success" ng-disabled="!nu.name || !nu.pass" ng-click="addUser(nu)">Create</button>
+  </div>
+</div>
