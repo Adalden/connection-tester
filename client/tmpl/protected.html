@@ -9,7 +9,7 @@
     <input type='text' ng-show="configSelected" ng-model="node.port">
     <div ng-show="configSelected" class= 'input-title'>Operating System</div>
     <input type='text' ng-show="configSelected" ng-model="node.os">
-    <button ng-show="configSelected" class='config-save' data-nodeId='{{selectedNode}}' ng-click="saveNodeInfo(selectedNode)">Save</button>
-    <button class='config-saveAll' ng-click="saveConfiguration()">Save Configuration</button>
+    <button ng-show="configSelected" class='config-save btn' data-nodeId='{{selectedNode}}' ng-click="saveNodeInfo(selectedNode)">Save</button>
+    <button class='config-saveAll btn' ng-click="saveConfiguration()">Save Configuration</button>
   </div>
 </div>

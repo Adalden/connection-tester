@@ -94,6 +94,14 @@ text.id {
   background-color: #808080;
   float: right;
 }
+.config-saveAll {
+  position: absolute;
+  top: 475px;
+  margin-left: 65px;
+}
+.config-save {
+  display: inherit;
+}
 * {
   padding: 0;
   margin: 0;
