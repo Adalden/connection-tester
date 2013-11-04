@@ -1,38 +1,9 @@
-/* global app */
-app.controller('protectedCtrl',
-  function ($scope, nodeSaver) {
-    'use strict'
+angular.module('app').directive('networkConfig', 
+  function() {
+  'use strict'
+
+  function link() {
     // set up SVG for D3
-    $scope.configSelected = false;
-    $scope.node = {};
-
-    $scope.saveNodeInfo = function(id) {
-      _.each($scope.nodes, function(thisNode){
-        if (thisNode.id == id) {
-          thisNode.name = $scope.node.name;
-          thisNode.ip   = $scope.node.ip;
-          thisNode.port = $scope.node.port;
-          thisNode.os   = $scope.node.os;
-        }
-      });
-
-      $scope.node = {};
-      $scope.configSelected = false;
-    };
-
-    $scope.saveConfiguration = function() {
-      nodeSaver.saveConfig({
-        nodes: $scope.nodes,
-        links: $scope.links
-      }, function(res){
-        if(!res) {
-          console.log('Woops something bad happened...');
-        } else {
-          console.log('Configuration saved!');
-        }
-      });
-    };
-
     var width  = 960,
         height = 500,
         colors = d3.scale.category10();
@@ -42,26 +13,31 @@ app.controller('protectedCtrl',
       .attr('width', width)
       .attr('height', height);
 
-    // set up initial $scope.nodes and $scope.links
-    //  - $scope.nodes are known by 'id', not by index in array.
+    // set up initial nodes and links
+    //  - nodes are known by 'id', not by index in array.
     //  - reflexive edges are indicated on the node (as a bold black circle).
-    //  - $scope.links are always source < target; edge directions are set by 'left' and 'right'.
-      $scope.links = [];
-      $scope.nodes = [
-        {id: 0, reflexive: false}
+    //  - links are always source < target; edge directions are set by 'left' and 'right'.
+    var nodes = [
+        {id: 0, reflexive: false},
+        {id: 1, reflexive: true },
+        {id: 2, reflexive: false}
+      ],
+      lastNodeId = 2,
+      links = [
+        {source: nodes[0], target: nodes[1], left: false, right: true },
+        {source: nodes[1], target: nodes[2], left: false, right: true }
       ];
-      var lastNodeId = 0;
 
     // init D3 force layout
     var force = d3.layout.force()
-        .nodes($scope.nodes)
-        .links($scope.links)
+        .nodes(nodes)
+        .links(links)
         .size([width, height])
         .linkDistance(150)
         .charge(-500)
         .on('tick', tick)
 
-    // define arrow markers for graph $scope.links
+    // define arrow markers for graph links
     svg.append('svg:defs').append('svg:marker')
         .attr('id', 'end-arrow')
         .attr('viewBox', '0 -5 10 10')
@@ -84,7 +60,7 @@ app.controller('protectedCtrl',
         .attr('d', 'M10,-5L0,0L10,5')
         .attr('fill', '#000');
 
-    // line displayed when dragging new $scope.nodes
+    // line displayed when dragging new nodes
     var drag_line = svg.append('svg:path')
       .attr('class', 'link dragline hidden')
       .attr('d', 'M0,0L0,0');
@@ -132,15 +108,15 @@ app.controller('protectedCtrl',
     // update graph (called when needed)
     function restart() {
       // path (link) group
-      path = path.data($scope.links);
+      path = path.data(links);
 
-      // update existing $scope.links
+      // update existing links
       path.classed('selected', function(d) { return d === selected_link; })
         .style('marker-start', function(d) { return d.left ? 'url(#start-arrow)' : ''; })
         .style('marker-end', function(d) { return d.right ? 'url(#end-arrow)' : ''; });
 
 
-      // add new $scope.links
+      // add new links
       path.enter().append('svg:path')
         .attr('class', 'link')
         .classed('selected', function(d) { return d === selected_link; })
@@ -157,20 +133,20 @@ app.controller('protectedCtrl',
           restart();
         });
 
-      // remove old $scope.links
+      // remove old links
       path.exit().remove();
 
 
       // circle (node) group
-      // NB: the function arg is crucial here! $scope.nodes are known by id, not by index!
-      circle = circle.data($scope.nodes, function(d) { return d.id; });
+      // NB: the function arg is crucial here! nodes are known by id, not by index!
+      circle = circle.data(nodes, function(d) { return d.id; });
 
-      // update existing $scope.nodes (reflexive & selected visual states)
+      // update existing nodes (reflexive & selected visual states)
       circle.selectAll('circle')
         .style('fill', function(d) { return (d === selected_node) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id); })
         .classed('reflexive', function(d) { return d.reflexive; });
 
-      // add new $scope.nodes
+      // add new nodes
       var g = circle.enter().append('svg:g');
 
       g.append('svg:circle')
@@ -197,10 +173,7 @@ app.controller('protectedCtrl',
           if(mousedown_node === selected_node) selected_node = null;
           else selected_node = mousedown_node;
           selected_link = null;
-
           $scope.configSelected = true;
-          $scope.selectedNode = selected_node ? selected_node.id : mousedown_node.id;
-          $scope.$apply();
 
           // reposition drag line
           drag_line
@@ -226,7 +199,7 @@ app.controller('protectedCtrl',
           d3.select(this).attr('transform', '');
 
           // add link to graph (update if exists)
-          // NB: $scope.links are strictly source < target; arrows separately specified by booleans
+          // NB: links are strictly source < target; arrows separately specified by booleans
           var source, target, direction;
           if(mousedown_node.id < mouseup_node.id) {
             source = mousedown_node;
@@ -239,7 +212,7 @@ app.controller('protectedCtrl',
           }
 
           var link;
-          link = $scope.links.filter(function(l) {
+          link = links.filter(function(l) {
             return (l.source === source && l.target === target);
           })[0];
 
@@ -248,7 +221,7 @@ app.controller('protectedCtrl',
           } else {
             link = {source: source, target: target, left: false, right: false};
             link[direction] = true;
-            $scope.links.push(link);
+            links.push(link);
           }
 
           // select new link
@@ -264,7 +237,7 @@ app.controller('protectedCtrl',
           .attr('class', 'id')
           .text(function(d) { return d.id; });
 
-      // remove old $scope.nodes
+      // remove old nodes
       circle.exit().remove();
 
       // set the graph in motion
@@ -285,7 +258,8 @@ app.controller('protectedCtrl',
           node = {id: ++lastNodeId, reflexive: false};
       node.x = point[0];
       node.y = point[1];
-      $scope.nodes.push(node);
+      nodes.push(node);
+      console.log('new node: ', nodes, links);
 
       restart();
     }
@@ -315,11 +289,11 @@ app.controller('protectedCtrl',
     }
 
     function spliceLinksForNode(node) {
-      var toSplice = $scope.links.filter(function(l) {
+      var toSplice = links.filter(function(l) {
         return (l.source === node || l.target === node);
       });
       toSplice.map(function(l) {
-        $scope.links.splice($scope.links.indexOf(l), 1);
+        links.splice(links.indexOf(l), 1);
       });
     }
 
@@ -343,10 +317,10 @@ app.controller('protectedCtrl',
         case 8: // backspace
         case 46: // delete
           if(selected_node) {
-            $scope.nodes.splice($scope.nodes.indexOf(selected_node), 1);
-            splice$scope.LinksForNode(selected_node);
+            nodes.splice(nodes.indexOf(selected_node), 1);
+            spliceLinksForNode(selected_node);
           } else if(selected_link) {
-            $scope.links.splice($scope.links.indexOf(selected_link), 1);
+            links.splice(links.indexOf(selected_link), 1);
           }
           selected_link = null;
           selected_node = null;
@@ -398,8 +372,16 @@ app.controller('protectedCtrl',
     svg.on('mousedown', mousedown)
       .on('mousemove', mousemove)
       .on('mouseup', mouseup);
-    // d3.select(window)
-    //   .on('keydown', keydown)
-    //   .on('keyup', keyup);
+    d3.select(window)
+      .on('keydown', keydown)
+      .on('keyup', keyup);
     restart();
+  }
+  return {
+    scope: {
+      networkConfig: '='
+    },
+    restrict: 'A',
+    link:     link
+  };
 });

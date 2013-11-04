@@ -87,6 +87,13 @@ text.id {
   text-anchor: middle;
   font-weight: bold;
 }
+.config-editor {
+  width: 250px;
+  height: 465px;
+  margin-right: 25px;
+  background-color: #808080;
+  float: right;
+}
 * {
   padding: 0;
   margin: 0;
