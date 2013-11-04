@@ -5,12 +5,11 @@ angular.module('app').controller('configurationsCtrl',
     // set up SVG for D3
     $scope.configSelected = false;
     $scope.selectConfig   = false;
-    $scope.node           = {};
     $scope.configName     = '';
 
     nodeSaver.retrieveConfigs(function(res) {
       if (!res) return alerts.create('error', 'Woops something bad happened...');
-      $scope.savedConfigs = res; 
+      $scope.savedConfigs = res;
       $scope.curConfig    = $scope.savedConfigs[0];
     });
 

@@ -16,8 +16,7 @@
     </div>
     <div ng-show="selectConfig">
       <div class= 'config-title'>Select Config</div>
-      <select ng-model="curConfig" ng-change="loadSelected(curConfig)">
-        <option ng-repeat="s in savedConfigs">{{s.name}}</option>
+      <select ng-model="curConfig" ng-change="loadSelected(curConfig)" ng-options="s.name for s in savedConfigs">
       </select>
     </div>
 
