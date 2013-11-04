@@ -19,10 +19,10 @@ nav = [
   },
   {
     name:   'Configurations',
-    state:  'protected',
-    url:    '/protected',
-    tmpl:   'tmpl/protected.html',
-    ctrl:   'protectedCtrl',
+    state:  'configurations',
+    url:    '/configurations',
+    tmpl:   'tmpl/configurations.html',
+    ctrl:   'configurationsCtrl',
     acl:    'engineer'
   },
   {
