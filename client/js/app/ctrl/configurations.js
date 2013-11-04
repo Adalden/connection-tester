@@ -1,78 +1,102 @@
-/* global app */
-app.controller('protectedCtrl',
-  function ($scope, nodeSaver) {
-    'use strict'
+/* global angular, d3, _ */
+angular.module('app').controller('configurationsCtrl',
+  function ($scope, alerts, nodeSaver) {
+    'use strict';
     // set up SVG for D3
     $scope.configSelected = false;
     $scope.selectConfig   = false;
     $scope.node           = {};
-    $scope.configName     = "";
+    $scope.configName     = '';
 
     nodeSaver.retrieveConfigs(function(res) {
-      if (!res) return console.log('Woops something bad happened...');
+      if (!res) return alerts.create('error', 'Woops something bad happened...');
       $scope.savedConfigs = res; 
       $scope.curConfig    = $scope.savedConfigs[0];
     });
 
-    $scope.saveNodeInfo = function(id) {
-      _.each($scope.nodes, function(thisNode){
-        if (thisNode.id == id) {
-          thisNode.name = $scope.node.name;
-          thisNode.ip   = $scope.node.ip;
-          thisNode.port = $scope.node.port;
-          thisNode.os   = $scope.node.os;
-        }
-      });
-
-      $scope.node = {};
-      $scope.configSelected = false;
-    };
-
     $scope.saveConfiguration = function(name) {
-      nodeSaver.saveConfig({
+      var newConfig = {
         name:  name,
-        nodes: $scope.nodes,
-        links: $scope.links
-      }, function(res){
+        nodes: [],
+        links: []
+      };
+
+      newConfig.nodes = _.map($scope.nodes, function (node) {
+        return {
+          id: node.id,
+          name: node.name,
+          ip: node.ip,
+          os: node.os
+        };
+      });
+
+      newConfig.links = _.map($scope.links, function (link) {
+        return {
+          target: link.target.id,
+          source: link.source.id,
+          port: link.port
+        };
+      });
+
+      nodeSaver.saveConfig(newConfig, function (res) {
         if(!res) {
-          console.log('Woops something bad happened...');
+          alerts.create('error', 'Woops something bad happened...');
         } else {
-          console.log('Configuration saved!');
+          alerts.create('success', 'Configuration saved!');
         }
       });
     };
 
-    $scope.loadConfiguration = function() {
+    $scope.loadConfiguration = function () {
       $scope.configSelected = false;
       $scope.selectConfig   = true;
     };
 
-    $scope.loadSelected = function(configName) {
-      _.each($scope.savedConfigs, function(config) {
+    $scope.loadSelected = function (configName) {
+      _.each($scope.savedConfigs, function (config) {
         if (config.name === configName) {
-          $scope.nodes      = config.nodes;
-          $scope.links      = config.links;
           $scope.configName = config.name;
           $scope.configSelected = false;
           $scope.selectConfig   = false;
+<<<<<<< HEAD:client/js/app/ctrl/protected.js
           resetd3();
+=======
+
+          $scope.nodes.length = 0;
+          _.each(config.nodes, function (node) {
+            $scope.nodes.push(node);
+          });
+
+          $scope.links.length = 0;
+          _.each(config.links, function (link) {
+            $scope.links.push({
+              source: getById($scope.nodes, link.source),
+              target: getById($scope.nodes, link.target),
+              port: link.port
+            });
+          });
+
+          _.each($scope.nodes, function (node) {
+            node.id = ++lastNodeId;
+          });
+
+          restart();
+>>>>>>> 52b11dbea8ba5b0fce7b15f09f2a3785d0db6deb:client/js/app/ctrl/configurations.js
         }
       });
     };
 
-    function setModel (id) {
-      _.each($scope.nodes, function(thisNode) {
-        if (thisNode.id == id) {
-          $scope.node = thisNode;
-        }
-      }); 
-    };
+    function getById(arr, id) {
+      return _.find(arr, function (node) {
+        return node.id == id;
+      });
+    }
 
     var width  = 960,
         height = 500,
         colors = d3.scale.category10();
 
-    var svg = d3.select('body')
+    var svg = d3.select('#configBuilder')
       .append('svg')
       .attr('width', width)
       .attr('height', height);
@@ -81,11 +105,11 @@ app.controller('protectedCtrl',
     //  - $scope.nodes are known by 'id', not by index in array.
     //  - reflexive edges are indicated on the node (as a bold black circle).
     //  - $scope.links are always source < target; edge directions are set by 'left' and 'right'.
-      $scope.links = [];
-      $scope.nodes = [
-        {id: 0, reflexive: false}
-      ];
-      var lastNodeId = 0;
+    $scope.links = [];
+    $scope.nodes = [
+      { id: 0 }
+    ];
+    var lastNodeId = 0;
 
     // init D3 force layout
     var force = d3.layout.force()
@@ -94,7 +118,7 @@ app.controller('protectedCtrl',
         .size([width, height])
         .linkDistance(150)
         .charge(-500)
-        .on('tick', tick)
+        .on('tick', tick);
 
     // define arrow markers for graph $scope.links
     svg.append('svg:defs').append('svg:marker')
@@ -104,7 +128,7 @@ app.controller('protectedCtrl',
         .attr('markerWidth', 3)
         .attr('markerHeight', 3)
         .attr('orient', 'auto')
-      .append('svg:path')
+        .append('svg:path')
         .attr('d', 'M0,-5L10,0L0,5')
         .attr('fill', '#000');
 
@@ -115,7 +139,7 @@ app.controller('protectedCtrl',
         .attr('markerWidth', 3)
         .attr('markerHeight', 3)
         .attr('orient', 'auto')
-      .append('svg:path')
+        .append('svg:path')
         .attr('d', 'M10,-5L0,0L10,5')
         .attr('fill', '#000');
 
@@ -144,18 +168,16 @@ app.controller('protectedCtrl',
     // update force layout (called automatically each iteration)
     function tick() {
       // draw directed edges with proper padding from node centers
-      path.attr('d', function(d) {
+      path.attr('d', function (d) {
         var deltaX = d.target.x - d.source.x,
             deltaY = d.target.y - d.source.y,
             dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY),
             normX = deltaX / dist,
             normY = deltaY / dist,
-            sourcePadding = d.left ? 17 : 12,
-            targetPadding = d.right ? 17 : 12,
-            sourceX = d.source.x + (sourcePadding * normX),
-            sourceY = d.source.y + (sourcePadding * normY),
-            targetX = d.target.x - (targetPadding * normX),
-            targetY = d.target.y - (targetPadding * normY);
+            sourceX = d.source.x + (17 * normX),
+            sourceY = d.source.y + (17 * normY),
+            targetX = d.target.x - (12 * normX),
+            targetY = d.target.y - (12 * normY);
         return 'M' + sourceX + ',' + sourceY + 'L' + targetX + ',' + targetY;
       });
 
@@ -170,40 +192,40 @@ app.controller('protectedCtrl',
       path = path.data($scope.links);
 
       // update existing $scope.links
-      path.classed('selected', function(d) { return d === selected_link; })
-        .style('marker-start', function(d) { return d.left ? 'url(#start-arrow)' : ''; })
-        .style('marker-end', function(d) { return d.right ? 'url(#end-arrow)' : ''; });
-
+      path.classed('selected', function (d) { return d === selected_link; })
+        .style('marker-start', 'url(#start-arrow)');
 
       // add new $scope.links
       path.enter().append('svg:path')
         .attr('class', 'link')
-        .classed('selected', function(d) { return d === selected_link; })
-        .style('marker-start', function(d) { return d.left ? 'url(#start-arrow)' : ''; })
-        .style('marker-end', function(d) { return d.right ? 'url(#end-arrow)' : ''; })
-        .on('mousedown', function(d) {
-          if(d3.event.ctrlKey) return;
+        .classed('selected', function (d) { return d === selected_link; })
+        .style('marker-start', 'url(#start-arrow)')
+        .on('mousedown', function (d) {
+          if (d3.event.ctrlKey || d3.event.metaKey) return;
 
           // select link
           mousedown_link = d;
-          if(mousedown_link === selected_link) selected_link = null;
+          if (mousedown_link === selected_link) selected_link = null;
           else selected_link = mousedown_link;
           selected_node = null;
+
+          $scope.configSelected = 'line';
+          $scope.line = selected_link ? selected_link : mousedown_link;
+          $scope.$apply();
+
           restart();
         });
 
       // remove old $scope.links
       path.exit().remove();
 
-
       // circle (node) group
       // NB: the function arg is crucial here! $scope.nodes are known by id, not by index!
-      circle = circle.data($scope.nodes, function(d) { return d.id; });
+      circle = circle.data($scope.nodes, function (d) { return d.id; });
 
       // update existing $scope.nodes (reflexive & selected visual states)
       circle.selectAll('circle')
-        .style('fill', function(d) { return (d === selected_node) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id); })
-        .classed('reflexive', function(d) { return d.reflexive; });
+        .style('fill', function (d) { return (d === selected_node) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id); });
 
       // add new $scope.nodes
       var g = circle.enter().append('svg:g');
@@ -211,31 +233,29 @@ app.controller('protectedCtrl',
       g.append('svg:circle')
         .attr('class', 'node')
         .attr('r', 12)
-        .style('fill', function(d) { return (d === selected_node) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id); })
-        .style('stroke', function(d) { return d3.rgb(colors(d.id)).darker().toString(); })
-        .classed('reflexive', function(d) { return d.reflexive; })
-        .on('mouseover', function(d) {
-          if(!mousedown_node || d === mousedown_node) return;
+        .style('fill', function (d) { return (d === selected_node) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id); })
+        .style('stroke', function (d) { return d3.rgb(colors(d.id)).darker().toString(); })
+        .on('mouseover', function (d) {
+          if (!mousedown_node || d === mousedown_node) return;
           // enlarge target node
           d3.select(this).attr('transform', 'scale(1.1)');
         })
-        .on('mouseout', function(d) {
-          if(!mousedown_node || d === mousedown_node) return;
+        .on('mouseout', function (d) {
+          if (!mousedown_node || d === mousedown_node) return;
           // unenlarge target node
           d3.select(this).attr('transform', '');
         })
-        .on('mousedown', function(d) {
-          if(d3.event.ctrlKey) return;
+        .on('mousedown', function (d) {
+          if (d3.event.ctrlKey || d3.event.metaKey) return;
 
           // select node
           mousedown_node = d;
-          if(mousedown_node === selected_node) selected_node = null;
+          if (mousedown_node === selected_node) selected_node = null;
           else selected_node = mousedown_node;
           selected_link = null;
 
-          $scope.configSelected = true;
-          $scope.selectedNode = selected_node ? selected_node.id : mousedown_node.id;
-          setModel($scope.selectedNode);
+          $scope.configSelected = 'node';
+          $scope.node = selected_node ? selected_node : mousedown_node;
           $scope.$apply();
 
           // reposition drag line
@@ -256,34 +276,20 @@ app.controller('protectedCtrl',
 
           // check for drag-to-self
           mouseup_node = d;
-          if(mouseup_node === mousedown_node) { resetMouseVars(); return; }
+          if (mouseup_node === mousedown_node) return resetMouseVars();
 
           // unenlarge target node
           d3.select(this).attr('transform', '');
 
-          // add link to graph (update if exists)
-          // NB: $scope.links are strictly source < target; arrows separately specified by booleans
-          var source, target, direction;
-          if(mousedown_node.id < mouseup_node.id) {
-            source = mousedown_node;
-            target = mouseup_node;
-            direction = 'right';
-          } else {
-            source = mouseup_node;
-            target = mousedown_node;
-            direction = 'left';
-          }
+          var source = mouseup_node;
+          var target = mousedown_node;
 
-          var link;
-          link = $scope.links.filter(function(l) {
-            return (l.source === source && l.target === target);
+          var link = $scope.links.filter(function (l) {
+            return ((l.source === source && l.target === target) || (l.source === target && l.target === source));
           })[0];
 
-          if(link) {
-            link[direction] = true;
-          } else {
-            link = {source: source, target: target, left: false, right: false};
-            link[direction] = true;
+          if (!link) {
+            link = { source: source, target: target };
             $scope.links.push(link);
           }
 
@@ -298,7 +304,7 @@ app.controller('protectedCtrl',
           .attr('x', 0)
           .attr('y', 4)
           .attr('class', 'id')
-          .text(function(d) { return d.id; });
+          .text(function (d) { return d.name || d.id; });
 
       // remove old $scope.nodes
       circle.exit().remove();
@@ -311,24 +317,26 @@ app.controller('protectedCtrl',
       console.log('click');
       // prevent I-bar on drag
       //d3.event.preventDefault();
-      
+
       // because :active only works in WebKit?
       svg.classed('active', true);
 
-      if(d3.event.ctrlKey || mousedown_node || mousedown_link) return;
+      if(d3.event.ctrlKey || d3.event.metaKey || mousedown_node || mousedown_link) return;
 
       // insert new node at point
-      var point = d3.mouse(this),
-          node = {id: ++lastNodeId, reflexive: false};
-      node.x = point[0];
-      node.y = point[1];
+      var point = d3.mouse(this);
+      var node = {
+        id: ++lastNodeId,
+        x: point[0],
+        y: point[1]
+      };
       $scope.nodes.push(node);
 
       restart();
     }
 
     function mousemove() {
-      if(!mousedown_node) return;
+      if (!mousedown_node) return;
 
       // update drag line
       drag_line.attr('d', 'M' + mousedown_node.x + ',' + mousedown_node.y + 'L' + d3.mouse(this)[0] + ',' + d3.mouse(this)[1]);
@@ -337,7 +345,7 @@ app.controller('protectedCtrl',
     }
 
     function mouseup() {
-      if(mousedown_node) {
+      if (mousedown_node) {
         // hide drag line
         drag_line
           .classed('hidden', true)
@@ -364,56 +372,28 @@ app.controller('protectedCtrl',
     var lastKeyDown = -1;
 
     function keydown() {
-      d3.event.preventDefault();
-
       if(lastKeyDown !== -1) return;
       lastKeyDown = d3.event.keyCode;
 
       // ctrl
-      if(d3.event.keyCode === 17) {
+      if (d3.event.ctrlKey || d3.event.metaKey) {
         circle.call(force.drag);
         svg.classed('ctrl', true);
       }
 
-      if(!selected_node && !selected_link) return;
-      switch(d3.event.keyCode) {
+      if (!selected_node && !selected_link) return;
+      switch (d3.event.keyCode) {
         case 8: // backspace
         case 46: // delete
-          if(selected_node) {
+          d3.event.preventDefault();
+          if (selected_node) {
             $scope.nodes.splice($scope.nodes.indexOf(selected_node), 1);
-            splice$scope.LinksForNode(selected_node);
+            spliceLinksForNode(selected_node);
           } else if(selected_link) {
             $scope.links.splice($scope.links.indexOf(selected_link), 1);
           }
           selected_link = null;
           selected_node = null;
-          restart();
-          break;
-        case 66: // B
-          if(selected_link) {
-            // set link direction to both left and right
-            selected_link.left = true;
-            selected_link.right = true;
-          }
-          restart();
-          break;
-        case 76: // L
-          if(selected_link) {
-            // set link direction to left only
-            selected_link.left = true;
-            selected_link.right = false;
-          }
-          restart();
-          break;
-        case 82: // R
-          if(selected_node) {
-            // toggle node reflexivity
-            selected_node.reflexive = !selected_node.reflexive;
-          } else if(selected_link) {
-            // set link direction to right only
-            selected_link.left = false;
-            selected_link.right = true;
-          }
           restart();
           break;
       }
@@ -422,8 +402,8 @@ app.controller('protectedCtrl',
     function keyup() {
       lastKeyDown = -1;
 
-      // ctrl
-      if(d3.event.keyCode === 17) {
+      // ctrl or meta
+      if(d3.event.keyCode === 17 || d3.event.keyCode === 91) {
         circle
           .on('mousedown.drag', null)
           .on('touchstart.drag', null);
@@ -435,8 +415,8 @@ app.controller('protectedCtrl',
     svg.on('mousedown', mousedown)
       .on('mousemove', mousemove)
       .on('mouseup', mouseup);
-    // d3.select(window)
-    //   .on('keydown', keydown)
-    //   .on('keyup', keyup);
+    d3.select(window)
+      .on('keydown', keydown)
+      .on('keyup', keyup);
     restart();
 });
