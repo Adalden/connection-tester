@@ -1,7 +1,8 @@
 /* jshint node:true */
 'use strict';
 
-var user = require('../utils/userFile.js');
+var user   = require('../utils/userFile.js');
+var config = require('../utils/configs.js');
 
 module.exports = function (app) {
   var loggedIn = app.mw.isLoggedIn;

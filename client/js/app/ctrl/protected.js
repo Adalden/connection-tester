@@ -4,7 +4,15 @@ app.controller('protectedCtrl',
     'use strict'
     // set up SVG for D3
     $scope.configSelected = false;
-    $scope.node = {};
+    $scope.selectConfig   = false;
+    $scope.node           = {};
+    $scope.configName     = "";
+
+    nodeSaver.retrieveConfigs(function(res) {
+      if (!res) return console.log('Woops something bad happened...');
+      $scope.savedConfigs = res; 
+      $scope.curConfig    = res[0];
+    });
 
     $scope.saveNodeInfo = function(id) {
       _.each($scope.nodes, function(thisNode){
@@ -20,8 +28,9 @@ app.controller('protectedCtrl',
       $scope.configSelected = false;
     };
 
-    $scope.saveConfiguration = function() {
+    $scope.saveConfiguration = function(name) {
       nodeSaver.saveConfig({
+        name:  name,
         nodes: $scope.nodes,
         links: $scope.links
       }, function(res){
@@ -31,6 +40,32 @@ app.controller('protectedCtrl',
           console.log('Configuration saved!');
         }
       });
+    };
+
+    $scope.loadConfiguration = function() {
+      $scope.configSelected = false;
+      $scope.selectConfig   = true;
+    };
+
+    $scope.loadSelected = function(configName) {
+      _.each($scope.savedConfigs, function(config) {
+        if (config.name === configName) {
+          $scope.nodes      = config.nodes;
+          $scope.links      = config.links;
+          $scope.configName = config.name;
+          $scope.configSelected = false;
+          $scope.selectConfig   = false;
+          restart();
+        }
+      });
+    };
+
+    function setModel (id) {
+      _.each($scope.nodes, function(thisNode) {
+        if (thisNode.id == id) {
+          $scope.node = thisNode;
+        }
+      }); 
     };
 
     var width  = 960,
@@ -200,6 +235,7 @@ app.controller('protectedCtrl',
 
           $scope.configSelected = true;
           $scope.selectedNode = selected_node ? selected_node.id : mousedown_node.id;
+          setModel($scope.selectedNode);
           $scope.$apply();
 
           // reposition drag line
