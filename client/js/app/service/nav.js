@@ -21,8 +21,8 @@ nav = [
     name:   'Configurations',
     state:  'configurations',
     url:    '/configurations',
-    tmpl:   'tmpl/configurations.html',
-    ctrl:   'configurationsCtrl',
+    tmpl:   'tmpl/configs.html',
+    ctrl:   'configsCtrl',
     acl:    'engineer'
   },
   {

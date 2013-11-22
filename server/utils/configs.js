@@ -1,28 +1,67 @@
+/* jshint node:true */
 'use strict';
 
-var fs    = require('fs'),
-  configs = require('../data/configurations.json');
+// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+// +-+ Include Deps -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+var      fs = require('fs'),
+          _ = require('underscore'),
+    configs = require('../data/configurations.json');
+
+// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+// +-+ Public Functions -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 module.exports = {
+  exists: exists,
+  list: list,
   save: save,
-  get:  get
-};
-
-function save(req, res) {
-  fs.readFile(__dirname + '/../data/configurations.json', function (err, data) {
-    if (err) return res.fail(err);
-    var data = JSON.parse(data);
-    data.push(req.body);
-    fs.writeFile(__dirname + '/../data/configurations.json', JSON.stringify(data), function (err) {
-      if (err) return res.fail(err);
-      res.send('ok');
-    });
-  });
+  get: get
 };
 
 function get(req, res) {
-  fs.readFile(__dirname + '/../data/configurations.json', function(err, data) {
-    if (err) return res.fail(err);
-    res.send(JSON.parse(data));
+  var config = configs[req.params.name];
+  if (!config) return res.fail('No such config exists.');
+
+  res.send({
+    success: true,
+    config:  config
   });
-};
+}
+
+function list(req, res) {
+  res.send({
+    success: true,
+    configs: _.keys(configs)
+  });
+}
+
+function exists(req, res) {
+  var config = configs[req.params.name];
+  res.send({
+    success: true,
+    exists:  !!config
+  });
+}
+
+function save(req, res) {
+  var newConfig = req.body;
+
+  configs[newConfig.name] = newConfig;
+
+  _updateConfigFile(function (err) {
+    if (err) return res.fail(err);
+    res.send({
+      success: true
+    });
+  });
+}
+
+// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+// +-+ Private Functions +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+function _updateConfigFile(cb) {
+  fs.writeFile(__dirname + '/../data/configurations.json', JSON.stringify(configs), cb);
+}

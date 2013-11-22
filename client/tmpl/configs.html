@@ -1,0 +1,27 @@
+<div id="configurations">
+  <div class="controls">
+    <button class="btn" ng-click="newButton()">New</button>
+    <button class="btn" ng-click="openButton()">Open</button>
+    <button class="btn" ng-disabled="!name" ng-click="saveButton()">Save</button>
+    <button class="btn" ng-click="saveButton(true)">Save As...</button>
+  </div>
+
+  <div class="box editor">
+<!--     <div class='config-indent' ng-show="configSelected == 'node'">
+      <div class="config-title">Edit Node #{{node.id}}</div>
+      <div class="input-title">Node Name</div>
+      <input type="text" ng-model="node.name">
+      <div class="input-title">IP Address</div>
+      <input type="text" ng-model="node.ip">
+      <div class= "input-title">Operating System</div>
+      <input type="text" ng-model="node.os">
+    </div>
+    <div class='config-indent' ng-show="configSelected == 'line'">
+      <div class="config-title">Edit Connection between #{{line.target.id}} and #{{line.source.id}}</div>
+      <div class="input-title">Communcation Port</div>
+      <input type="text" ng-model="line.port">
+    </div> -->
+  </div>
+
+  <span network-config></span>
+</div>

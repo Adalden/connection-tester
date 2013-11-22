@@ -9,13 +9,25 @@ module.exports = function (app) {
 
   app.post('/config/save',
     loggedIn,
-    hasACL('admin'),
+    hasACL('engineer'),
     config.save
   );
 
-  app.get('/config/get',
+  app.get('/config/get/:name',
     loggedIn,
-    hasACL('admin'),
+    hasACL('engineer'),
     config.get
+  );
+
+  app.get('/config/list',
+    loggedIn,
+    hasACL('engineer'),
+    config.list
+  );
+
+  app.get('/config/:name/exists',
+    loggedIn,
+    hasACL('engineer'),
+    config.exists
   );
 };

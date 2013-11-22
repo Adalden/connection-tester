@@ -1,0 +1,106 @@
+svg {
+  background-color: #FFF;
+  cursor: default;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+svg:not(.active):not(.ctrl) {
+  cursor: crosshair;
+}
+
+path.link {
+  fill: none;
+  stroke: #000;
+  stroke-width: 4px;
+  cursor: default;
+}
+
+svg:not(.active):not(.ctrl) path.link {
+  cursor: pointer;
+}
+
+path.link.selected {
+  stroke-dasharray: 10,2;
+}
+
+path.link.dragline {
+  pointer-events: none;
+}
+
+path.link.hidden {
+  stroke-width: 0;
+}
+
+circle.node {
+  stroke-width: 1.5px;
+  cursor: pointer;
+}
+
+circle.node.reflexive {
+  stroke: #000 !important;
+  stroke-width: 2.5px;
+}
+
+text {
+  font: 12px sans-serif;
+  pointer-events: none;
+}
+
+text.id {
+  text-anchor: middle;
+  font-weight: bold;
+}
+
+#configurations
+
+  .controls
+    float: left
+    position: absolute
+
+  .box
+    width: 270px
+    padding: 10px
+    margin: 5px
+    background-color: gray
+    border: 2px solid black
+    border-radius: 10px
+    float:right
+    clear: both
+
+  .editor
+    min-height: 300px
+
+    .config-indent
+      margin-left: 15px
+
+      .config-title
+        color: white
+        font-size: 17px
+        margin-bottom: 5px
+
+      .input-title
+        color: white
+        font-size: 12px
+        margin-bottom: 5px
+
+
+  // .config-editor
+  //   width: 250px
+  //   height: 465px
+  //   margin-right: 5px
+  //   background-color: gray
+  //   float:right
+  //   border: 2px solid black
+  //   border-radius: 10px
+
+  // .config-footer
+  //   position: absolute
+  //   top: 400px
+  //   margin-left: 15px
+
+  // .config-save
+  //   margin-left: 10px
