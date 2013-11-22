@@ -49,6 +49,12 @@ nav = [
     acl:    ['admin', 'engineer', 'tester']
   },
   {
+    name:   'Help?',
+    modal: true,
+    tmpl:   'tmpl/m/help.html',
+    ctrl:   'modalHelpCtrl'
+  },
+  {
     name:   'Login',
     state:  'login',
     url:    '/login',
