@@ -31,11 +31,19 @@ angular.module('app').factory('configs',
       });
     }
 
+    function getAll(cb) {
+      $http.get('/config/getAll').then(function (resp) {
+        if (!resp.data.success) return cb(resp.data.err);
+        cb(null, resp.data.configs);
+      });
+    }
+
     return {
       exists: exists,
       list:   list,
       save:   save,
-      get:    get
+      get:    get,
+      getAll: getAll
     };
   }
 );

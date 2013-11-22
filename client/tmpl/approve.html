@@ -1,6 +1,16 @@
 <div class="approve-pane">
   <p>Waiting for Approval</p>
-  <select ng-model="selectedConfig" ng-click="loadConfig(selectedConfig)" ng-options="s.name for s in configurations"></select>
+  <select ng-model="selectedConfig" ng-change="loadConfig(selectedConfig)" ng-options="s.name for s in configs"></select>
   <p>Approve Current Config</p>
   <button class="btn" ng-click="approveConfig(selectedConfig)">Approve</button>
 </div>
+
+
+<span network-config
+    nodes="nodes"
+    conns="conns"
+    editable="false"
+    select="select"
+    deselect="deselect">
+</span>
+

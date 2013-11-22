@@ -15,9 +15,10 @@ var      fs = require('fs'),
 
 module.exports = {
   exists: exists,
-  list: list,
-  save: save,
-  get: get
+  list:   list,
+  save:   save,
+  getAll: getAll,
+  get:    get
 };
 
 function get(req, res) {
@@ -27,6 +28,13 @@ function get(req, res) {
   res.send({
     success: true,
     config:  config
+  });
+}
+
+function getAll(req, res) {
+  res.send({
+    success: true,
+    configs: configs
   });
 }
 
