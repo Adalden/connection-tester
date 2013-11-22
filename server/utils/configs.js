@@ -47,6 +47,7 @@ function exists(req, res) {
 
 function save(req, res) {
   var newConfig = req.body;
+  newConfig.approved = false;
 
   configs[newConfig.name] = newConfig;
 

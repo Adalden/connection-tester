@@ -19,15 +19,17 @@ angular.module('app').directive('networkConfig',
     //  - reflexive edges are indicated on the node (as a bold black circle).
     //  - links are always source < target; edge directions are set by 'left' and 'right'.
     var nodes = [
-        {id: 0, reflexive: false},
-        {id: 1, reflexive: true },
-        {id: 2, reflexive: false}
-      ],
-      lastNodeId = 2,
-      links = [
-        {source: nodes[0], target: nodes[1], left: false, right: true },
-        {source: nodes[1], target: nodes[2], left: false, right: true }
-      ];
+      { id: 0 },
+      { id: 1 },
+      { id: 2 }
+    ];
+
+    var lastNodeId = 2;
+
+    var links = [
+      { source: nodes[0], target: nodes[1] },
+      { source: nodes[1], target: nodes[2] }
+    ];
 
     // init D3 force layout
     var force = d3.layout.force()
@@ -36,7 +38,7 @@ angular.module('app').directive('networkConfig',
         .size([width, height])
         .linkDistance(150)
         .charge(-500)
-        .on('tick', tick)
+        .on('tick', tick);
 
     // define arrow markers for graph links
     svg.append('svg:defs').append('svg:marker')
@@ -112,23 +114,23 @@ angular.module('app').directive('networkConfig',
       path = path.data(links);
 
       // update existing links
-      path.classed('selected', function(d) { return d === selected_link; })
-        .style('marker-start', function(d) { return d.left ? 'url(#start-arrow)' : ''; })
-        .style('marker-end', function(d) { return d.right ? 'url(#end-arrow)' : ''; });
+      path.classed('selected', function (d) { return d === selected_link; })
+        .style('marker-start', '')
+        .style('marker-end', 'url(#end-arrow)');
 
 
       // add new links
       path.enter().append('svg:path')
         .attr('class', 'link')
         .classed('selected', function(d) { return d === selected_link; })
-        .style('marker-start', function(d) { return d.left ? 'url(#start-arrow)' : ''; })
-        .style('marker-end', function(d) { return d.right ? 'url(#end-arrow)' : ''; })
-        .on('mousedown', function(d) {
-          if(d3.event.ctrlKey) return;
+        .style('marker-start', '')
+        .style('marker-end', 'url(#end-arrow)')
+        .on('mousedown', function (d) {
+          if (d3.event.ctrlKey || d3.event.metaKey) return;
 
           // select link
           mousedown_link = d;
-          if(mousedown_link === selected_link) selected_link = null;
+          if (mousedown_link === selected_link) selected_link = null;
           else selected_link = mousedown_link;
           selected_node = null;
           restart();
@@ -140,12 +142,11 @@ angular.module('app').directive('networkConfig',
 
       // circle (node) group
       // NB: the function arg is crucial here! nodes are known by id, not by index!
-      circle = circle.data(nodes, function(d) { return d.id; });
+      circle = circle.data(nodes, function (d) { return d.id; });
 
       // update existing nodes (reflexive & selected visual states)
       circle.selectAll('circle')
-        .style('fill', function(d) { return (d === selected_node) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id); })
-        .classed('reflexive', function(d) { return d.reflexive; });
+        .style('fill', function (d) { return (d === selected_node) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id); });
 
       // add new nodes
       var g = circle.enter().append('svg:g');
@@ -153,28 +154,24 @@ angular.module('app').directive('networkConfig',
       g.append('svg:circle')
         .attr('class', 'node')
         .attr('r', 12)
-        .style('fill', function(d) { return (d === selected_node) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id); })
-        .style('stroke', function(d) { return d3.rgb(colors(d.id)).darker().toString(); })
-        .classed('reflexive', function(d) { return d.reflexive; })
-        .on('mouseover', function(d) {
-          if(!mousedown_node || d === mousedown_node) return;
-          // enlarge target node
+        .style('fill', function (d) { return (d === selected_node) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id); })
+        .style('stroke', function (d) { return d3.rgb(colors(d.id)).darker().toString(); })
+        .on('mouseover', function (d) {
+          if (!mousedown_node || d === mousedown_node) return;
           d3.select(this).attr('transform', 'scale(1.1)');
         })
-        .on('mouseout', function(d) {
-          if(!mousedown_node || d === mousedown_node) return;
-          // unenlarge target node
+        .on('mouseout', function (d) {
+          if (!mousedown_node || d === mousedown_node) return;
           d3.select(this).attr('transform', '');
         })
-        .on('mousedown', function(d) {
-          if(d3.event.ctrlKey) return;
+        .on('mousedown', function (d) {
+          if(d3.event.ctrlKey || d3.event.metaKey) return;
 
           // select node
           mousedown_node = d;
-          if(mousedown_node === selected_node) selected_node = null;
+          if (mousedown_node === selected_node) selected_node = null;
           else selected_node = mousedown_node;
           selected_link = null;
-          $scope.configSelected = true;
 
           // reposition drag line
           drag_line
@@ -184,8 +181,8 @@ angular.module('app').directive('networkConfig',
 
           restart();
         })
-        .on('mouseup', function(d) {
-          if(!mousedown_node) return;
+        .on('mouseup', function (d) {
+          if (!mousedown_node) return;
 
           // needed by FF
           drag_line
@@ -194,7 +191,7 @@ angular.module('app').directive('networkConfig',
 
           // check for drag-to-self
           mouseup_node = d;
-          if(mouseup_node === mousedown_node) { resetMouseVars(); return; }
+          if (mouseup_node === mousedown_node) return resetMouseVars();
 
           // unenlarge target node
           d3.select(this).attr('transform', '');
@@ -202,22 +199,15 @@ angular.module('app').directive('networkConfig',
           // add link to graph (update if exists)
           // NB: links are strictly source < target; arrows separately specified by booleans
           var source, target, direction;
-          if(mousedown_node.id < mouseup_node.id) {
-            source = mousedown_node;
-            target = mouseup_node;
-            direction = 'right';
-          } else {
-            source = mouseup_node;
-            target = mousedown_node;
-            direction = 'left';
-          }
+          source = mousedown_node;
+          target = mouseup_node;
+          direction = 'right';
 
-          var link;
-          link = links.filter(function(l) {
+          var link = links.filter(function (l) {
             return (l.source === source && l.target === target);
           })[0];
 
-          if(link) {
+          if (link) {
             link[direction] = true;
           } else {
             link = {source: source, target: target, left: false, right: false};
@@ -236,7 +226,7 @@ angular.module('app').directive('networkConfig',
           .attr('x', 0)
           .attr('y', 4)
           .attr('class', 'id')
-          .text(function(d) { return d.id; });
+          .text(function (d) { return d.id; });
 
       // remove old nodes
       circle.exit().remove();
@@ -246,17 +236,13 @@ angular.module('app').directive('networkConfig',
     }
 
     function mousedown() {
-      // prevent I-bar on drag
-      //d3.event.preventDefault();
-
-      // because :active only works in WebKit?
       svg.classed('active', true);
 
-      if(d3.event.ctrlKey || mousedown_node || mousedown_link) return;
+      if (d3.event.ctrlKey || d3.event.metaKey || mousedown_node || mousedown_link) return;
 
       // insert new node at point
       var point = d3.mouse(this),
-          node = {id: ++lastNodeId, reflexive: false};
+          node = { id: ++lastNodeId };
       node.x = point[0];
       node.y = point[1];
       nodes.push(node);
@@ -266,7 +252,7 @@ angular.module('app').directive('networkConfig',
     }
 
     function mousemove() {
-      if(!mousedown_node) return;
+      if (!mousedown_node) return;
 
       // update drag line
       drag_line.attr('d', 'M' + mousedown_node.x + ',' + mousedown_node.y + 'L' + d3.mouse(this)[0] + ',' + d3.mouse(this)[1]);
@@ -275,14 +261,13 @@ angular.module('app').directive('networkConfig',
     }
 
     function mouseup() {
-      if(mousedown_node) {
+      if (mousedown_node) {
         // hide drag line
         drag_line
           .classed('hidden', true)
           .style('marker-end', '');
       }
 
-      // because :active only works in WebKit?
       svg.classed('active', false);
 
       // clear mouse event vars
@@ -298,22 +283,8 @@ angular.module('app').directive('networkConfig',
       });
     }
 
-    // only respond once per keydown
-    var lastKeyDown = -1;
-
     function keydown() {
-      d3.event.preventDefault();
-
-      if(lastKeyDown !== -1) return;
-      lastKeyDown = d3.event.keyCode;
-
-      // ctrl
-      if(d3.event.keyCode === 17) {
-        circle.call(force.drag);
-        svg.classed('ctrl', true);
-      }
-
-      if(!selected_node && !selected_link) return;
+      if (!selected_node && !selected_link) return;
       switch(d3.event.keyCode) {
         case 8: // backspace
         case 46: // delete
@@ -327,45 +298,6 @@ angular.module('app').directive('networkConfig',
           selected_node = null;
           restart();
           break;
-        case 66: // B
-          if(selected_link) {
-            // set link direction to both left and right
-            selected_link.left = true;
-            selected_link.right = true;
-          }
-          restart();
-          break;
-        case 76: // L
-          if(selected_link) {
-            // set link direction to left only
-            selected_link.left = true;
-            selected_link.right = false;
-          }
-          restart();
-          break;
-        case 82: // R
-          if(selected_node) {
-            // toggle node reflexivity
-            selected_node.reflexive = !selected_node.reflexive;
-          } else if(selected_link) {
-            // set link direction to right only
-            selected_link.left = false;
-            selected_link.right = true;
-          }
-          restart();
-          break;
-      }
-    }
-
-    function keyup() {
-      lastKeyDown = -1;
-
-      // ctrl
-      if(d3.event.keyCode === 17) {
-        circle
-          .on('mousedown.drag', null)
-          .on('touchstart.drag', null);
-        svg.classed('ctrl', false);
       }
     }
 
@@ -373,16 +305,16 @@ angular.module('app').directive('networkConfig',
     svg.on('mousedown', mousedown)
       .on('mousemove', mousemove)
       .on('mouseup', mouseup);
-    d3.select(window)
-      .on('keydown', keydown)
-      .on('keyup', keyup);
+
     restart();
   }
   return {
     scope: {
-      networkConfig: '='
+      nodes: '=',
+      conns: '=',
+      editable: '='
     },
-    restrict: 'A',
+    restrict: 'EA',
     link:     link
   };
 });
