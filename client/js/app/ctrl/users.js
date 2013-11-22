@@ -1,12 +1,7 @@
 /* global angular, _ */
 angular.module('app').controller('usersCtrl',
-  function ($scope, alerts, users) {
+  function ($scope, $modal, alerts, users) {
     'use strict';
-
-    $scope.modalOpts = {
-      backdropFade: true,
-      dialogFade: true
-    };
 
     users.getAll(function (err, all) {
       if (err) return alerts.create('error', err);
@@ -28,17 +23,23 @@ angular.module('app').controller('usersCtrl',
       });
     };
 
-    $scope.addUser = function (newUser) {
+    $scope.newUserDialog = function () {
+      $modal.open({
+        templateUrl: 'tmpl/m/user.html',
+        controller: 'modalUser'
+      }).result.then(function (newUser) {
+        addUser(newUser);
+      });
+    };
+
+    function addUser(newUser) {
       var user = _translate(newUser);
 
       users.create(user, function (err, savedUser) {
         if (err) return alerts.create('error', err);
         $scope.users.push(savedUser);
-        $scope.showModal = false;
-
-        $scope.nu = {};
       });
-    };
+    }
 
     function _translate(user) {
       var newUser = {

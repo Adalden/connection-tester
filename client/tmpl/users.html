@@ -27,32 +27,5 @@
     </tr>
   </table>
 
-  <button class="btn btn-success" ng-click="showModal = true">Add User</button>
-</div>
-
-<div modal="showModal" options="modalOpts">
-  <div class="modal-header">
-    <h3>Add New User</h3>
-  </div>
-  <div class="modal-body">
-    <label>Username:</label>
-    <input type="text" ng-model="nu.name">
-    <label>Password:</label>
-    <input type="text" ng-model="nu.pass">
-    <label>Access Control:</label>
-    <label class="checkbox">
-      <input ng-model="nu.acl.admin" type="checkbox"> admin
-    </label>
-    <label class="checkbox">
-      <input ng-model="nu.acl.engineer" type="checkbox"> engineer
-    </label>
-    <label class="checkbox">
-      <input ng-model="nu.acl.tester" type="checkbox"> tester
-    </label>
-
-  </div>
-  <div class="modal-footer">
-    <button class="btn" ng-click="showModal = false">Cancel</button>
-    <button class="btn btn-success" ng-disabled="!nu.name || !nu.pass" ng-click="addUser(nu)">Create</button>
-  </div>
+  <button class="btn btn-success" ng-click="newUserDialog()">Add User</button>
 </div>

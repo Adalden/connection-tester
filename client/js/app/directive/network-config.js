@@ -1,14 +1,15 @@
-angular.module('app').directive('networkConfig', 
+/* global angular, d3 */
+angular.module('app').directive('networkConfig',
   function() {
-  'use strict'
+  'use strict';
 
-  function link() {
+  function link(scope, el) {
     // set up SVG for D3
     var width  = 960,
         height = 500,
         colors = d3.scale.category10();
 
-    var svg = d3.select('body')
+    var svg = d3.select(el[0])
       .append('svg')
       .attr('width', width)
       .attr('height', height);
@@ -247,7 +248,7 @@ angular.module('app').directive('networkConfig',
     function mousedown() {
       // prevent I-bar on drag
       //d3.event.preventDefault();
-      
+
       // because :active only works in WebKit?
       svg.classed('active', true);
 
