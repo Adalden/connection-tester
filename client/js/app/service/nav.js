@@ -18,12 +18,28 @@ nav = [
     acl:    'admin'
   },
   {
-    name:   'Configurations',
+    name:   'Create',
     state:  'configurations',
     url:    '/configurations',
     tmpl:   'tmpl/configs.html',
     ctrl:   'configsCtrl',
     acl:    'engineer'
+  },
+  {
+    name:   'Approve',
+    state:  'approve',
+    url:    '/approve',
+    tmpl:   'tmpl/approve.html',
+    ctrl:   'approveCtrl',
+    acl:    'admin'
+  },
+  {
+    name:   'Simulate',
+    state:  'simulate',
+    url:    '/simulate',
+    tmpl:   'tmpl/simulate.html',
+    ctrl:   'simulateCtrl',
+    acl:    'tester'
   },
   {
     name:   'Login',
