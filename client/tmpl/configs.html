@@ -4,7 +4,9 @@
     <button class="btn" ng-click="openButton()">Open</button>
     <button class="btn" ng-disabled="!name" ng-click="saveButton()">Save</button>
     <button class="btn" ng-click="saveButton(true)">Save As...</button>
+    <h1>{{name}}</h1>
   </div>
+
 
   <div class="box editor">
 <!--     <div class='config-indent' ng-show="configSelected == 'node'">
@@ -23,5 +25,5 @@
     </div> -->
   </div>
 
-  <span network-config></span>
+  <span network-config nodes="nodes" conns="conns" editable="true" unsaved-changes="unsavedChanges"></span>
 </div>

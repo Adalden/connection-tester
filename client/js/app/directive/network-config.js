@@ -1,6 +1,6 @@
-/* global angular, d3 */
+/* global angular, d3, _, $ */
 angular.module('app').directive('networkConfig',
-  function() {
+  function ($rootScope) {
   'use strict';
 
   function link(scope, el) {
@@ -9,6 +9,10 @@ angular.module('app').directive('networkConfig',
         height = 500,
         colors = d3.scale.category10();
 
+scope.$watch('nodes', createItAll);
+
+function createItAll() {
+    $(el[0]).empty();
     var svg = d3.select(el[0])
       .append('svg')
       .attr('width', width)
@@ -18,18 +22,14 @@ angular.module('app').directive('networkConfig',
     //  - nodes are known by 'id', not by index in array.
     //  - reflexive edges are indicated on the node (as a bold black circle).
     //  - links are always source < target; edge directions are set by 'left' and 'right'.
-    var nodes = [
-      { id: 0 },
-      { id: 1 },
-      { id: 2 }
-    ];
+    var nodes = scope.nodes;
 
-    var lastNodeId = 2;
+    var lastNodeId = -1;
+    _.each(nodes, function (node) {
+      if (node.id > lastNodeId) lastNodeId = node.id;
+    });
 
-    var links = [
-      { source: nodes[0], target: nodes[1] },
-      { source: nodes[1], target: nodes[2] }
-    ];
+    var links = scope.conns;
 
     // init D3 force layout
     var force = d3.layout.force()
@@ -126,7 +126,12 @@ angular.module('app').directive('networkConfig',
         .style('marker-start', '')
         .style('marker-end', 'url(#end-arrow)')
         .on('mousedown', function (d) {
+          if (!scope.editable) return;
           if (d3.event.ctrlKey || d3.event.metaKey) return;
+
+          if (d3.event.which === 3) {
+            return deleteItem('link', d);
+          }
 
           // select link
           mousedown_link = d;
@@ -157,15 +162,23 @@ angular.module('app').directive('networkConfig',
         .style('fill', function (d) { return (d === selected_node) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id); })
         .style('stroke', function (d) { return d3.rgb(colors(d.id)).darker().toString(); })
         .on('mouseover', function (d) {
+          if (!scope.editable) return;
           if (!mousedown_node || d === mousedown_node) return;
           d3.select(this).attr('transform', 'scale(1.1)');
         })
         .on('mouseout', function (d) {
+          if (!scope.editable) return;
           if (!mousedown_node || d === mousedown_node) return;
           d3.select(this).attr('transform', '');
         })
         .on('mousedown', function (d) {
+          if (!scope.editable) return;
           if(d3.event.ctrlKey || d3.event.metaKey) return;
+
+          if (d3.event.which === 3) {
+            deleteItem('node', d);
+            return restart();
+          }
 
           // select node
           mousedown_node = d;
@@ -182,6 +195,7 @@ angular.module('app').directive('networkConfig',
           restart();
         })
         .on('mouseup', function (d) {
+          if (!scope.editable) return;
           if (!mousedown_node) return;
 
           // needed by FF
@@ -204,15 +218,14 @@ angular.module('app').directive('networkConfig',
           direction = 'right';
 
           var link = links.filter(function (l) {
-            return (l.source === source && l.target === target);
+            return (l.source === source && l.target === target) || (l.source === target && l.target === source);
           })[0];
 
-          if (link) {
-            link[direction] = true;
-          } else {
-            link = {source: source, target: target, left: false, right: false};
-            link[direction] = true;
+          if (!link) {
+            link = { source: source, target: target };
             links.push(link);
+            scope.unsavedChanges = true;
+            $rootScope.$apply();
           }
 
           // select new link
@@ -239,6 +252,7 @@ angular.module('app').directive('networkConfig',
       svg.classed('active', true);
 
       if (d3.event.ctrlKey || d3.event.metaKey || mousedown_node || mousedown_link) return;
+      if (d3.event.which === 3) return;
 
       // insert new node at point
       var point = d3.mouse(this),
@@ -246,7 +260,8 @@ angular.module('app').directive('networkConfig',
       node.x = point[0];
       node.y = point[1];
       nodes.push(node);
-      console.log('new node: ', nodes, links);
+      scope.unsavedChanges = true;
+      $rootScope.$apply();
 
       restart();
     }
@@ -255,7 +270,8 @@ angular.module('app').directive('networkConfig',
       if (!mousedown_node) return;
 
       // update drag line
-      drag_line.attr('d', 'M' + mousedown_node.x + ',' + mousedown_node.y + 'L' + d3.mouse(this)[0] + ',' + d3.mouse(this)[1]);
+      var point = d3.mouse(this);
+      drag_line.attr('d', 'M' + mousedown_node.x + ',' + mousedown_node.y + 'L' + point[0] + ',' + point[1]);
 
       restart();
     }
@@ -274,45 +290,51 @@ angular.module('app').directive('networkConfig',
       resetMouseVars();
     }
 
+    function deleteItem(type, item) {
+      if (type === 'node') {
+        nodes.splice(nodes.indexOf(item), 1);
+        spliceLinksForNode(item);
+      } else {
+        links.splice(links.indexOf(item), 1);
+      }
+      selected_link = null;
+      selected_node = null;
+      scope.unsavedChanges = true;
+      $rootScope.$apply();
+      restart();
+    }
+
     function spliceLinksForNode(node) {
       var toSplice = links.filter(function(l) {
         return (l.source === node || l.target === node);
       });
-      toSplice.map(function(l) {
+      toSplice.map(function (l) {
         links.splice(links.indexOf(l), 1);
       });
     }
 
-    function keydown() {
-      if (!selected_node && !selected_link) return;
-      switch(d3.event.keyCode) {
-        case 8: // backspace
-        case 46: // delete
-          if(selected_node) {
-            nodes.splice(nodes.indexOf(selected_node), 1);
-            spliceLinksForNode(selected_node);
-          } else if(selected_link) {
-            links.splice(links.indexOf(selected_link), 1);
-          }
-          selected_link = null;
-          selected_node = null;
-          restart();
-          break;
-      }
+    // app starts here
+    if (scope.editable) {
+      svg.on('mousedown', mousedown)
+        .on('mousemove', mousemove)
+        .on('mouseup', mouseup)
+        .on('contextmenu', function () {
+          d3.event.preventDefault();
+        });
     }
 
-    // app starts here
-    svg.on('mousedown', mousedown)
-      .on('mousemove', mousemove)
-      .on('mouseup', mouseup);
-
     restart();
+}
+
+
+
   }
   return {
     scope: {
       nodes: '=',
       conns: '=',
-      editable: '='
+      editable: '=',
+      unsavedChanges: '='
     },
     restrict: 'EA',
     link:     link
