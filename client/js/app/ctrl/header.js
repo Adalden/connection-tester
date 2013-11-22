@@ -1,11 +1,17 @@
 /* global app */
 app.controller('headerCtrl',
-  function ($scope, $state, user, nav) {
+  function ($scope, $modal, $state, user, nav) {
     'use strict';
     $scope.nav = nav;
     $scope.state = $state;
 
     $scope.goTo = function (item) {
+      if (item.modal) {
+        return $modal.open({
+          templateUrl: item.tmpl,
+          controller: item.ctrl
+        });
+      }
       $state.transitionTo(item.state);
     };
 

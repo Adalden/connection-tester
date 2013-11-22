@@ -6,6 +6,7 @@ app.config(
     'use strict';
 
     for (var i = 0; i < nav.length; ++i) {
+      if (!nav[i].state) continue;
       $stateProvider.state(nav[i].state, {
         templateUrl: nav[i].tmpl,
         controller: nav[i].ctrl,

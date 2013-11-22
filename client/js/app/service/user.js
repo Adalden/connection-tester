@@ -8,7 +8,10 @@ angular.module('app').factory('user',
       this.hasACL = function (permission) {
         if ('data' in user) {
           if (_.isArray(user.data.acl)) {
-            return _.contains(user.data.acl, permission);
+            if (!_.isArray(permission)) permission = [permission];
+            return !!_.find(permission, function (perm) {
+              return _.contains(user.data.acl, perm);
+            });
           }
         }
         return false;

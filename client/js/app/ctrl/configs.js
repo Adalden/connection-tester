@@ -23,7 +23,7 @@ angular.module('app').controller('configsCtrl',
     };
 
     function openDialog() {
-      createModal('tmpl/m/open.html', 'modalOpen').then(function (choice) {
+      createModal('tmpl/m/open.html', 'modalOpenCtrl').then(function (choice) {
         openConfig(choice);
       }, function (err) {
         if (err && err !== 'backdrop click')
@@ -46,7 +46,7 @@ angular.module('app').controller('configsCtrl',
     };
 
     function saveDialog() {
-      createModal('tmpl/m/save.html', 'modalSave').then(function (name) {
+      createModal('tmpl/m/save.html', 'modalSaveCtrl').then(function (name) {
         configs.exists(name, function (err, doesExist) {
           if (err) return alerts.create('error', err);
           var newSaveFn = _.partial(saveConfig, name);
@@ -80,7 +80,7 @@ angular.module('app').controller('configsCtrl',
     }
 
     function showPrompt(msg, cb) {
-      createModal('tmpl/m/prompt.html', 'modalPrompt', msg).then(cb);
+      createModal('tmpl/m/prompt.html', 'modalPromptCtrl', msg).then(cb);
     }
 
     function createModal(tmpl, ctrl, msg) {

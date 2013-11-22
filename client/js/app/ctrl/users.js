@@ -26,7 +26,7 @@ angular.module('app').controller('usersCtrl',
     $scope.newUserDialog = function () {
       $modal.open({
         templateUrl: 'tmpl/m/user.html',
-        controller: 'modalUser'
+        controller: 'modalUserCtrl'
       }).result.then(function (newUser) {
         addUser(newUser);
       });

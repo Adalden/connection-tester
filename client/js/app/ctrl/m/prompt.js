@@ -1,5 +1,5 @@
 /* global angular */
-angular.module('app').controller('modalPrompt',
+angular.module('app').controller('modalPromptCtrl',
   function ($scope, $modalInstance, msg) {
     'use strict';
 

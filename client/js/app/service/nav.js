@@ -42,6 +42,13 @@ nav = [
     acl:    'tester'
   },
   {
+    name:   'What Is My IP?',
+    modal: true,
+    tmpl:   'tmpl/m/ip.html',
+    ctrl:   'modalIpCtrl',
+    acl:    ['admin', 'engineer', 'tester']
+  },
+  {
     name:   'Login',
     state:  'login',
     url:    '/login',

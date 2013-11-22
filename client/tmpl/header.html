@@ -3,7 +3,7 @@
     <a href="#" class="brand">Connection Tester</a>
     <ul class="nav">
       <li ng-repeat="item in nav | filter:security" ng-class="{active:item.state==state.current.name}">
-        <a href="#{{item.url}}">{{item.name}}</a>
+        <a ng-click="goTo(item)">{{item.name}}</a>
       </li>
     </ul>
 

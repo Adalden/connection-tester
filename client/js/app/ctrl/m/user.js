@@ -1,5 +1,5 @@
 /* global angular */
-angular.module('app').controller('modalUser',
+angular.module('app').controller('modalUserCtrl',
   function ($scope, $modalInstance) {
     'use strict';
 

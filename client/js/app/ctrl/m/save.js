@@ -1,5 +1,5 @@
 /* global angular */
-angular.module('app').controller('modalSave',
+angular.module('app').controller('modalSaveCtrl',
   function ($scope, $modalInstance) {
     'use strict';
 
