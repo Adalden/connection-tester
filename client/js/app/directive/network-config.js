@@ -139,6 +139,7 @@ angular.module('app').directive('networkConfig',
             if (!scope.editable) {
               if (d === selected_link) selected_link = null;
               else selected_link = d;
+              selected_node = null;
               restart();
               return;
             }
@@ -190,6 +191,7 @@ angular.module('app').directive('networkConfig',
             if (!scope.editable) {
               if (d === selected_node) selected_node = null;
               else selected_node = d;
+              selected_link = null;
               restart();
               return;
             }
