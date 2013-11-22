@@ -1,8 +1,20 @@
+<div class="controls">
+  <button class="btn" ng-click="approveConfig(selectedConfig)" ng-disabled="btnDisabled">Approve</button>
+</div>
+
 <div class="approve-pane">
-  <p>Waiting for Approval</p>
-  <select ng-model="selectedConfig" ng-change="loadConfig(selectedConfig)" ng-options="s.name for s in configs"></select>
-  <p>Approve Current Config</p>
-  <button class="btn" ng-click="approveConfig(selectedConfig)">Approve</button>
+  <p class="input-title config-indent">Waiting for Approval</p>
+  <select class= "config-indent" ng-model="selectedConfig" ng-change="loadConfig(selectedConfig)" ng-options="s.name for s in configs"></select>
+
+  <div class='config-indent' ng-show="showTitle == 'node'">
+    <div class="input-title">Node Name: {{showItem.name}}</div>
+    <div class="input-title">IP Address: {{showItem.ip}}</div>
+    <div class="input-title">Operating System: {{showItem.os}}</div>
+  </div>
+  <div class="config-indent" ng-show="showTitle == 'conn'">
+    <div class="input-title">Connection between #{{showItem.target.id}} and #{{showItem.source.id}}</div>
+    <div class="input-title">Communcation Port: {{showItem.port}}</div>
+  </div>
 </div>
 
 
