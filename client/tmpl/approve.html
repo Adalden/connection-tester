@@ -1,1 +1,6 @@
-THIS IS THE APPROVAL PAGE
+<div class="approve-pane">
+  <p>Waiting for Approval</p>
+  <select ng-model="selectedConfig" ng-click="loadConfig(selectedConfig)" ng-options="s.name for s in configurations"></select>
+  <p>Approve Current Config</p>
+  <button class="btn" ng-click="approveConfig(selectedConfig)">Approve</button>
+</div>
