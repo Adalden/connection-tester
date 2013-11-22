@@ -105,7 +105,7 @@ angular.module('app').directive('networkConfig',
           return 'M' + sourceX + ',' + sourceY + 'L' + targetX + ',' + targetY;
         });
 
-        circle.attr('transform', function(d) {
+        circle.attr('transform', function (d) {
           return 'translate(' + d.x + ',' + d.y + ')';
         });
       }
@@ -136,7 +136,12 @@ angular.module('app').directive('networkConfig',
           .style('marker-start', '')
           .style('marker-end', 'url(#end-arrow)')
           .on('mousedown', function (d) {
-            if (!scope.editable) return;
+            if (!scope.editable) {
+              if (d === selected_link) selected_link = null;
+              else selected_link = d;
+              restart();
+              return;
+            }
             if (d3.event.ctrlKey || d3.event.metaKey) return;
 
             if (d3.event.which === 3) {
@@ -182,7 +187,12 @@ angular.module('app').directive('networkConfig',
             d3.select(this).attr('transform', '');
           })
           .on('mousedown', function (d) {
-            if (!scope.editable) return;
+            if (!scope.editable) {
+              if (d === selected_node) selected_node = null;
+              else selected_node = d;
+              restart();
+              return;
+            }
             if(d3.event.ctrlKey || d3.event.metaKey) return;
 
             if (d3.event.which === 3) {
@@ -323,11 +333,12 @@ angular.module('app').directive('networkConfig',
       if (scope.editable) {
         svg.on('mousedown', mousedown)
           .on('mousemove', mousemove)
-          .on('mouseup', mouseup)
-          .on('contextmenu', function () {
-            d3.event.preventDefault();
-          });
+          .on('mouseup', mouseup);
       }
+
+      svg.on('contextmenu', function () {
+        d3.event.preventDefault();
+      });
 
       restart();
     }
