@@ -5,6 +5,16 @@ angular.module('app').controller('configsCtrl',
 
     newConfig();
 
+    $scope.select = function (name, item) {
+      $scope.editTitle = name;
+      $scope.editItem = item;
+    };
+
+    $scope.deselect = function () {
+      $scope.editTitle = '';
+      $scope.editItem = '';
+    };
+
     $scope.newButton = function () {
       ensureSave(newConfig);
     };

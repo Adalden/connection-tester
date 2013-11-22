@@ -9,21 +9,28 @@
 
 
   <div class="box editor">
-<!--     <div class='config-indent' ng-show="configSelected == 'node'">
-      <div class="config-title">Edit Node #{{node.id}}</div>
+    <div class='config-indent' ng-show="editTitle == 'node'">
+      <div class="config-title">Edit Node #{{editItem.id}}</div>
       <div class="input-title">Node Name</div>
-      <input type="text" ng-model="node.name">
+      <input type="text" ng-model="editItem.name">
       <div class="input-title">IP Address</div>
-      <input type="text" ng-model="node.ip">
+      <input type="text" ng-model="editItem.ip">
       <div class= "input-title">Operating System</div>
-      <input type="text" ng-model="node.os">
+      <input type="text" ng-model="editItem.os">
     </div>
-    <div class='config-indent' ng-show="configSelected == 'line'">
-      <div class="config-title">Edit Connection between #{{line.target.id}} and #{{line.source.id}}</div>
+
+    <div class='config-indent' ng-show="editTitle == 'conn'">
+      <div class="config-title">Edit Connection between #{{editItem.target.id}} and #{{editItem.source.id}}</div>
       <div class="input-title">Communcation Port</div>
-      <input type="text" ng-model="line.port">
-    </div> -->
+      <input type="text" ng-model="editItem.port">
+    </div>
   </div>
 
-  <span network-config nodes="nodes" conns="conns" editable="true" unsaved-changes="unsavedChanges"></span>
+  <span network-config
+    nodes="nodes"
+    conns="conns"
+    editable="true"
+    unsaved-changes="unsavedChanges"
+    select="select"
+    deselect="deselect"></span>
 </div>
