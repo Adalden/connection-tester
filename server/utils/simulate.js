@@ -128,7 +128,6 @@ module.exports = function (io) {
     console.log('setting up Server' + conn.port);
     var id = http.createServer(function (req, res) {
       aliveNodes.push(conn.source);
-      aliveNodes = _.uniq(aliveNodes);
       update();
       res.end(aliveNodes.toString());
     }).listen(conn.port);
@@ -147,8 +146,8 @@ module.exports = function (io) {
         if (err) return;
         if (body) {
           var json = JSON.parse(body);
+          aliveNodes.push(conn.target);
           aliveNodes = aliveNodes.concat(json);
-          aliveNodes = _.uniq(aliveNodes);
           update();
         }
       });
@@ -157,6 +156,7 @@ module.exports = function (io) {
   }
 
   function update() {
+    aliveNodes = _.uniq(aliveNodes);
     io.sockets.emit('progress', aliveNodes);
   }
 };
