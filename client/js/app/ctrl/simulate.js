@@ -1,4 +1,4 @@
-/* global angular, d3, $ */
+/* global angular, $ */
 
 angular.module('app').controller('simulateCtrl',
   function ($scope, $timeout, configs, alerts, socket){
@@ -21,14 +21,13 @@ angular.module('app').controller('simulateCtrl',
         $scope.nodes = res.nodes;
         $scope.conns = res.conns;
 
-        var timeout = $timeout(function() {
+        $timeout(function() {
           $scope.nodes.forEach(function(node) {
             $('#node-'+node.id).css({
               'stroke': 'red',
               'fill':   'red'
             });
           });
-          $timeout.cancel(timeout);
         }, 50);
       });
     };
@@ -36,8 +35,13 @@ angular.module('app').controller('simulateCtrl',
     $scope.start = function() {
       if (!$scope.nodes.length && !$scope.conns.length) return;
       $scope.running = !$scope.running;
-      socket.emit('start', $scope.curConfig, function(err, res) {
-        console.log(err, res);
+      socket.emit('start', $scope.curConfig, function (data) {
+        if (!data.success) {
+          if (data.config) {
+            $scope.configName = data.config.name;
+            $scope.getConfig(data.config.name);
+          }
+        }
       });
     };
 
@@ -47,7 +51,7 @@ angular.module('app').controller('simulateCtrl',
     };
 
     socket.on('progress', function(nodes) {
-      console.log(nodes);
+      if (!$scope.running) return;
       nodes.forEach(function(node) {
         $('#node-' + node).css({
           'stroke':  'green',
@@ -56,11 +60,9 @@ angular.module('app').controller('simulateCtrl',
       });
     });
 
-    socket.on('started', function(config) {
+    socket.on('started', function (config) {
       $scope.running = true;
-      $scope.curConfig = config;
-      $scope.nodes = config.nodes;
-      $scope.conns = config.conns;
+      $scope.getConfig(config.name);
     });
 
     socket.on('stopped', function() {

@@ -79,7 +79,6 @@ module.exports = function (io) {
     });
     if (selfNode === undefined) return false;
 
-    console.log('adding self', selfNode.id);
     aliveNodes.push(selfNode.id);
 
     for (var j = 0; j < curConfig.conns.length; ++j) {
