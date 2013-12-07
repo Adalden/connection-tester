@@ -19,16 +19,16 @@ module.exports = function (app) {
     config.get
   );
 
-  app.get('/config/getAll',
-    loggedIn,
-    hasACL('admin'),
-    config.getAll
-  );
-
   app.get('/config/list',
     loggedIn,
     hasACL('engineer'),
     config.list
+  );
+
+  app.get('/config/approve/:name',
+    loggedIn,
+    hasACL('admin'),
+    config.approve
   );
 
   app.get('/config/:name/exists',
