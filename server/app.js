@@ -4,7 +4,8 @@
 var       fs = require('fs'),
      express = require('express'),
       stylus = require('stylus'),
-      config = require('config');
+      config = require('config'),
+          io = require('socket.io');
 
 var app = express();
 app.set('port', process.env.PORT || 3000);
@@ -68,6 +69,10 @@ fs.readdirSync(__dirname + '/routes').forEach(function (file) {
   require('./routes/' + file)(app);
 });
 
-app.listen(app.get('port'), function () {
+var server = app.listen(app.get('port'), function () {
   console.log('Express server listening on port ' + app.get('port') + ' in environment ' + app.get('env'));
 });
+
+io = io.listen(server);
+
+require('./utils/simulate.js')(io);

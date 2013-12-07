@@ -11,7 +11,8 @@
     "config": "~0.4.32",
     "password-hash": "~1.2.1",
     "request": "~2.27.0",
-    "underscore": "~1.5.2"
+    "underscore": "~1.5.2",
+    "socket.io": "~0.9.16"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
