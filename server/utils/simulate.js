@@ -73,7 +73,8 @@ module.exports = function (io) {
     if (!curConfig.nodes || !curConfig.conns) return false;
 
     for (var i = 0; i < curConfig.nodes.length; ++i) {
-      if (curConfig.nodes[i].ip === ip) {
+      var node = curConfig.nodes[i];
+      if (node.ip === ip) {
         selfNode = curConfig.nodes[i].id;
       }
     }
@@ -98,6 +99,7 @@ module.exports = function (io) {
       }
     }
 
+    return true;
   }
 
   function stopSimulation() {
