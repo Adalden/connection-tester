@@ -4,7 +4,8 @@
 var time = 1; // 15
 
 var    http = require('http'),
-    request = require('request');
+    request = require('request'),
+          _ = require('underscore');
 
 module.exports = function (io) {
   var sessionGuid = 0;
@@ -117,7 +118,7 @@ module.exports = function (io) {
       // kill the server listeners[i]
     }
     for (var j = 0; j < askers.length; ++j) {
-      // kill the intervals
+      clearInterval(askers[j]);
     }
     listeners.length = 0;
     aliveNodes.length = 0;
@@ -126,13 +127,8 @@ module.exports = function (io) {
   function createAServer(conn) {
     console.log('setting up Server' + conn.port);
     var id = http.createServer(function (req, res) {
-      var exists = false;
-      for (var i = 0; i < aliveNodes.length && !exists; ++i) {
-        if (aliveNodes[i] === conn.source) {
-          exists = true;
-        }
-      }
-      if (!exists) aliveNodes.push(conn.source);
+      aliveNodes.push(conn.source);
+      aliveNodes = _.uniq(aliveNodes);
       update();
       res.end(aliveNodes.toString());
     }).listen(conn.port);
@@ -150,8 +146,10 @@ module.exports = function (io) {
       request(url, function (err, resp, body) {
         if (err) return;
         if (body) {
-          console.log(typeof body);
-          console.log(body);
+          var json = JSON.parse(body);
+          aliveNodes = aliveNodes.concat(json);
+          aliveNodes = _.uniq(aliveNodes);
+          update();
         }
       });
     }, 1000 * time);
