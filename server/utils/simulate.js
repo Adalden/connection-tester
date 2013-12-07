@@ -79,6 +79,7 @@ module.exports = function (io) {
     });
     if (selfNode === null) return false;
 
+    console.log('adding self', selfNode.id);
     aliveNodes.push(selfNode.id);
 
     for (var j = 0; j < curConfig.conns.length; ++j) {
@@ -119,8 +120,8 @@ module.exports = function (io) {
 
   function createAServer(conn) {
     var id = http.createServer(function (req, res) {
-      console.log(req.path);
-      var json = JSON.parse(req.path);
+      req.url = req.url.slice(1);
+      var json = JSON.parse(req.url);
       aliveNodes.push(conn.source);
       aliveNodes = aliveNodes.concat(json);
       update();
