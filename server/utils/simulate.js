@@ -108,7 +108,7 @@ module.exports = function (io) {
     running = false;
     curConfig = null;
     for (var i = 0; i < listeners.length; ++i) {
-      // kill the server listeners[i]
+      listeners[i].close();
     }
     for (var j = 0; j < askers.length; ++j) {
       clearInterval(askers[j]);
@@ -119,7 +119,10 @@ module.exports = function (io) {
 
   function createAServer(conn) {
     var id = http.createServer(function (req, res) {
+      console.log(req.path);
+      var json = JSON.parse(req.path);
       aliveNodes.push(conn.source);
+      aliveNodes = aliveNodes.concat(json);
       update();
       res.end(JSON.stringify(aliveNodes));
     }).listen(conn.port);
@@ -129,11 +132,10 @@ module.exports = function (io) {
   function createAnAsker(conn, sendNode) {
     if (!sendNode) return;
     var id = setInterval(function () {
-      var url = 'http://' + sendNode.ip + ':' + conn.port;
+      var url = 'http://' + sendNode.ip + ':' + conn.port + '/' + JSON.stringify(aliveNodes);
       request(url, function (err, resp, body) {
         if (err) return;
         if (body) {
-          console.log(body);
           var json = JSON.parse(body);
           aliveNodes.push(conn.target);
           aliveNodes = aliveNodes.concat(json);
