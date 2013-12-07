@@ -77,7 +77,7 @@ module.exports = function (io) {
     var selfNode = _.find(curConfig.nodes, function (node) {
       return node.ip === ip;
     });
-    if (selfNode === null) return false;
+    if (selfNode === undefined) return false;
 
     console.log('adding self', selfNode.id);
     aliveNodes.push(selfNode.id);
