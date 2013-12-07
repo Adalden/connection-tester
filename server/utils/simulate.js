@@ -79,6 +79,8 @@ module.exports = function (io) {
     });
     if (selfNode === null) return false;
 
+    aliveNodes.push(selfNode.id);
+
     for (var j = 0; j < curConfig.conns.length; ++j) {
       var conn = curConfig.conns[j];
       if (conn.source === selfNode.id) {
