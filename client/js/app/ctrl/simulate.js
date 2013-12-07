@@ -16,9 +16,10 @@ angular.module('app').controller('simulateCtrl',
     $scope.getConfig = function(selected) {
       configs.get(selected, function(err, res) {
         if (err) return alerts.create('error', 'Failed to load selected configuration!');
+        $scope.curConfig = {};
+        $.extend($scope.curConfig, res);
         $scope.nodes = res.nodes;
         $scope.conns = res.conns;
-        $scope.curConfig = res;
 
         var timeout = $timeout(function() {
           $scope.nodes.forEach(function(node) {
