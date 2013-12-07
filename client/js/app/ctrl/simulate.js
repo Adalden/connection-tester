@@ -24,8 +24,8 @@ angular.module('app').controller('simulateCtrl',
         var timeout = $timeout(function() {
           $scope.nodes.forEach(function(node) {
             $('#node-'+node.id).css({
-              'stroke':  '#555555',
-              'fill':    '#555555'
+              'stroke': 'red',
+              'fill':   'red'
             });
           });
           $timeout.cancel(timeout);
@@ -50,8 +50,8 @@ angular.module('app').controller('simulateCtrl',
       console.log(nodes);
       nodes.forEach(function(node) {
         $('#node-' + node).css({
-          'stroke':  'red',
-          'fill':    'red'
+          'stroke':  'green',
+          'fill':    'green'
         });
       });
     });
