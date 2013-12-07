@@ -141,6 +141,7 @@ module.exports = function (io) {
 
   function createAnAsker(conn, sendNode) {
     if (!sendNode) return;
+    console.log(sendNode);
     var hi = 'http://' + sendNode.ip + ':' + conn.port;
     console.log('setting up Asker' + hi);
 
