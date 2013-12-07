@@ -133,6 +133,7 @@ module.exports = function (io) {
       request(url, function (err, resp, body) {
         if (err) return;
         if (body) {
+          console.log(body);
           var json = JSON.parse(body);
           aliveNodes.push(conn.target);
           aliveNodes = aliveNodes.concat(json);
