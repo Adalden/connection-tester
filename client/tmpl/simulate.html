@@ -1,6 +1,6 @@
 <div class="approve-pane">
   <p class="input-title config-indent">Select Configuration</p>
-  <select class="config-indent" ng-model="curConfig" ng-change="getConfig(curConfig)" ng-options="c for c in configList"></select>
+  <select class="config-indent" ng-model="configName" ng-change="getConfig(configName)" ng-options="c for c in configList"></select>
 
   <div class="start-stop-wrapper">
     <button class="btn btn-success startConfig" ng-show="!running" ng-click="start()">Start</button>

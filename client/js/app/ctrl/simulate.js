@@ -18,6 +18,7 @@ angular.module('app').controller('simulateCtrl',
         if (err) return alerts.create('error', 'Failed to load selected configuration!');
         $scope.nodes = res.nodes;
         $scope.conns = res.conns;
+        $scope.curConfig = res;
 
         var timeout = $timeout(function() {
           $scope.nodes.forEach(function(node) {
