@@ -175,6 +175,7 @@ angular.module('app').directive('networkConfig',
         g.append('svg:circle')
           .attr('class', 'node')
           .attr('r', 12)
+          .attr('id', function (d) {return 'node-'+d.id;})
           .style('fill', function (d) { return (d === selected_node) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id); })
           .style('stroke', function (d) { return d3.rgb(colors(d.id)).darker().toString(); })
           .on('mouseover', function (d) {

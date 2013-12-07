@@ -1,5 +1,5 @@
 /* global angular, nav */
-var app = angular.module('app', ['ui.bootstrap', 'ui.router']);
+var app = angular.module('app', ['ui.bootstrap', 'ui.router', 'btford.socket-io']);
 
 app.config(
   function ($stateProvider, $urlRouterProvider) {

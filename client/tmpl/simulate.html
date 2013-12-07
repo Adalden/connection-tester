@@ -1,1 +1,27 @@
-THIS IS THE SIMULATION PAGE! WILL BE IMPLEMENTED IN HW#6
+<div class="approve-pane">
+  <p class="input-title config-indent">Select Configuration</p>
+  <select class="config-indent" ng-model="curConfig" ng-change="getConfig(curConfig)" ng-options="c for c in configList"></select>
+
+  <div class="start-stop-wrapper">
+    <button class="btn btn-success startConfig" ng-show="!running" ng-click="start()">Start</button>
+    <button class="btn btn-danger startConfig" ng-show="running" ng-click="stop()">Stop</button>
+  </div>
+
+<!--   <div class='config-indent' ng-show="showTitle == 'node'">
+    <div class="input-title">Node Name: {{showItem.name}}</div>
+    <div class="input-title">IP Address: {{showItem.ip}}</div>
+    <div class="input-title">Operating System: {{showItem.os}}</div>
+  </div>
+  <div class="config-indent" ng-show="showTitle == 'conn'">
+    <div class="input-title">Connection between #{{showItem.target.id}} and #{{showItem.source.id}}</div>
+    <div class="input-title">Communcation Port: {{showItem.port}}</div>
+  </div> -->
+</div>
+
+<span network-config
+    nodes="nodes"
+    conns="conns"
+    editable="false"
+    select="select"
+    deselect="deselect">
+</span>
