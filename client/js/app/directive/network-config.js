@@ -30,7 +30,7 @@ angular.module('app').directive('networkConfig',
       _.each(nodes, function (node) {
         if (node.id > lastNodeId) lastNodeId = node.id;
       });
-      debugger;
+
       var links = scope.conns;
 
       // init D3 force layout
