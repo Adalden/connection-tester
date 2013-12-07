@@ -49,7 +49,7 @@ angular.module('app').controller('simulateCtrl',
     socket.on('progress', function(nodes) {
       console.log(nodes);
       nodes.forEach(function(node) {
-        $('#node-' + node.id).css({
+        $('#node-' + node).css({
           'stroke':  'red',
           'fill':    'red'
         });
