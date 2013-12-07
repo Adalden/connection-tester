@@ -90,11 +90,11 @@ module.exports = function (io) {
             sendNode = curConfig.nodes[k];
           }
         }
-        var iid = createAnAsker(conn, sendNode);
+        var iid = createAnAsker(conn, sendNode, sessionGuid);
         askers.push(iid);
       } else if (conn.target === selfNode.id) {
         if (conn.port) {
-          var sid = createAServer(conn);
+          var sid = createAServer(conn, sessionGuid);
           listeners.push(sid);
         }
       }
@@ -117,8 +117,9 @@ module.exports = function (io) {
     aliveNodes.length = 0;
   }
 
-  function createAServer(conn) {
+  function createAServer(conn, guid) {
     var id = http.createServer(function (req, res) {
+      if (sessionGuid !== guid) return;
       req.url = req.url.slice(1);
       var json = JSON.parse(req.url);
       aliveNodes.push(conn.source);
@@ -129,11 +130,12 @@ module.exports = function (io) {
     return id;
   }
 
-  function createAnAsker(conn, sendNode) {
+  function createAnAsker(conn, sendNode, guid) {
     if (!sendNode) return;
     var id = setInterval(function () {
       var url = 'http://' + sendNode.ip + ':' + conn.port + '/' + JSON.stringify(aliveNodes);
       request(url, function (err, resp, body) {
+        if (sessionGuid !== guid) return;
         if (err) return;
         if (body) {
           var json = JSON.parse(body);
