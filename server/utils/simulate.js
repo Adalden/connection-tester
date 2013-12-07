@@ -72,34 +72,25 @@ module.exports = function (io) {
   }
 
   function startSimulation() {
-    var selfNode = null;
     if (!curConfig.nodes || !curConfig.conns) return false;
 
-    for (var i = 0; i < curConfig.nodes.length; ++i) {
-      var node = curConfig.nodes[i];
-      if (node.ip === ip) {
-        selfNode = curConfig.nodes[i].id;
-      }
-    }
+    var selfNode = _.find(curConfig.nodes, function (node) {
+      return node.ip === ip;
+    });
     if (selfNode === null) return false;
 
     for (var j = 0; j < curConfig.conns.length; ++j) {
       var conn = curConfig.conns[j];
-      console.log(conn);
-      console.log('source', conn.source, selfNode);
-      console.log('target', conn.target, selfNode);
-      if (conn.source === selfNode) {
+      if (conn.source === selfNode.id) {
         var sendNode = null;
         for (var k = 0; k < curConfig.nodes.length; ++k) {
           if (curConfig.nodes[k].id === conn.target) {
             sendNode = curConfig.nodes[k];
           }
         }
-        console.log('aoeu', sendNode);
         var iid = createAnAsker(conn, sendNode);
         askers.push(iid);
-      } else if (conn.target === selfNode) {
-        console.log('htns', conn);
+      } else if (conn.target === selfNode.id) {
         if (conn.port) {
           var sid = createAServer(conn);
           listeners.push(sid);
@@ -125,7 +116,6 @@ module.exports = function (io) {
   }
 
   function createAServer(conn) {
-    console.log('setting up Server' + conn.port);
     var id = http.createServer(function (req, res) {
       aliveNodes.push(conn.source);
       update();
@@ -136,10 +126,6 @@ module.exports = function (io) {
 
   function createAnAsker(conn, sendNode) {
     if (!sendNode) return;
-    console.log(sendNode);
-    var hi = 'http://' + sendNode.ip + ':' + conn.port;
-    console.log('setting up Asker' + hi);
-
     var id = setInterval(function () {
       var url = 'http://' + sendNode.ip + ':' + conn.port;
       request(url, function (err, resp, body) {
