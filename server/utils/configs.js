@@ -14,11 +14,11 @@ var      fs = require('fs'),
 // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 module.exports = {
-  exists: exists,
-  list:   list,
-  save:   save,
-  getAll: getAll,
-  get:    get
+  exists:  exists,
+  list:    list,
+  save:    save,
+  get:     get,
+  approve: approve
 };
 
 function get(req, res) {
@@ -31,17 +31,10 @@ function get(req, res) {
   });
 }
 
-function getAll(req, res) {
-  res.send({
-    success: true,
-    configs: configs
-  });
-}
-
 function list(req, res) {
   res.send({
     success: true,
-    configs: _.keys(configs)
+    configs: _.keys(configs) // also send approved status
   });
 }
 
@@ -53,9 +46,22 @@ function exists(req, res) {
   });
 }
 
+function approve(req, res) {
+  var config = configs[req.params.name] || {};
+
+  config.approved = true;
+
+  _updateConfigFile(function (err) {
+    if (err) return res.fail(err);
+    res.send({
+      success: true
+    });
+  });
+}
+
 function save(req, res) {
   var newConfig = req.body;
-  newConfig.approved = newConfig.approved || false;
+  newConfig.approved = false;
 
   configs[newConfig.name] = newConfig;
 

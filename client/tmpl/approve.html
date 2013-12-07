@@ -1,28 +1,29 @@
-<div class="controls">
-  <button class="btn" ng-click="approveConfig(selectedConfig)" ng-disabled="btnDisabled">Approve</button>
-</div>
-
-<div class="approve-pane">
-  <p class="input-title config-indent">Waiting for Approval</p>
-  <select class= "config-indent" ng-model="selectedConfig" ng-change="loadConfig(selectedConfig)" ng-options="s.name for s in configs"></select>
-
-  <div class='config-indent' ng-show="showTitle == 'node'">
-    <div class="input-title">Node Name: {{showItem.name}}</div>
-    <div class="input-title">IP Address: {{showItem.ip}}</div>
-    <div class="input-title">Operating System: {{showItem.os}}</div>
+<div ng-show="!configs.length" style="text-align:center;font-size:24px;margin-top:20px">No more configurations left to approve. :)</div>
+<div ng-show="configs.length">
+  <div class="controls">
+    <button class="btn" ng-click="approveConfig(selectedConfig, selectedIndex)" ng-disabled="!selectedConfig">Approve</button>
   </div>
-  <div class="config-indent" ng-show="showTitle == 'conn'">
-    <div class="input-title">Connection between #{{showItem.target.id}} and #{{showItem.source.id}}</div>
-    <div class="input-title">Communcation Port: {{showItem.port}}</div>
+
+  <div class="approve-pane">
+    <p class="input-title config-indent">Waiting for Approval</p>
+    <select class="config-indent" ng-model="selectedConfig" ng-change="loadConfig(selectedConfig)" ng-options="s for s in configs"></select>
+
+    <div class='config-indent' ng-show="showTitle == 'node'">
+      <div class="input-title">Node Name: {{showItem.name}}</div>
+      <div class="input-title">IP Address: {{showItem.ip}}</div>
+      <div class="input-title">Operating System: {{showItem.os}}</div>
+    </div>
+    <div class="config-indent" ng-show="showTitle == 'conn'">
+      <div class="input-title">Connection between #{{showItem.source.id}} and #{{showItem.target.id}}</div>
+      <div class="input-title">Communcation Port: {{showItem.port}}</div>
+    </div>
   </div>
+
+  <span network-config
+      nodes="nodes"
+      conns="conns"
+      editable="false"
+      select="select"
+      deselect="deselect">
+  </span>
 </div>
-
-
-<span network-config
-    nodes="nodes"
-    conns="conns"
-    editable="false"
-    select="select"
-    deselect="deselect">
-</span>
-
