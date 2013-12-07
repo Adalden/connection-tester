@@ -29,7 +29,13 @@ module.exports = function (io) {
         });
       } else {
         setupSimulation(config);
-        startSimulation();
+        if (!startSimulation()) {
+          fn({
+            success: false,
+            err: 'Bad Config or IP Not Found'
+          });
+          return;
+        }
         socket.broadcast.emit('started', config);
         fn({
           success: true
@@ -64,6 +70,8 @@ module.exports = function (io) {
 
   function startSimulation() {
     var selfNode = null;
+    if (!curConfig.nodes || !curConfig.conns) return false;
+
     for (var i = 0; i < curConfig.nodes.length; ++i) {
       if (curConfig.nodes[i].ip === ip) {
         selfNode = curConfig.nodes[i].id;
