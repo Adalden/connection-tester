@@ -121,7 +121,7 @@ module.exports = function (io) {
     var id = http.createServer(function (req, res) {
       aliveNodes.push(conn.source);
       update();
-      res.end(aliveNodes.toString());
+      res.end(JSON.stringify(aliveNodes));
     }).listen(conn.port);
     return id;
   }
