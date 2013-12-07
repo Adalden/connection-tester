@@ -1,6 +1,8 @@
 /* jshint node:true */
 'use strict';
 
+var time = 1; // 15
+
 var    http = require('http'),
     request = require('request');
 
@@ -117,6 +119,7 @@ module.exports = function (io) {
   }
 
   function createAServer(conn) {
+    console.log('setting up Server' + conn.port);
     var id = http.createServer(function (req, res) {
       var exists = false;
       for (var i = 0; i < aliveNodes.length && !exists; ++i) {
@@ -133,6 +136,9 @@ module.exports = function (io) {
 
   function createAnAsker(conn, sendNode) {
     if (!sendNode) return;
+    var hi = 'http://' + sendNode.ip + ':' + conn.port;
+    console.log('setting up Asker' + hi);
+
     var id = setInterval(function () {
       var url = 'http://' + sendNode.ip + ':' + conn.port;
       request(url, function (err, resp, body) {
@@ -142,7 +148,7 @@ module.exports = function (io) {
           console.log(body);
         }
       });
-    }, 1000 * 15);
+    }, 1000 * time);
     return id;
   }
 
