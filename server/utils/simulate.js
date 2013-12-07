@@ -87,7 +87,7 @@ module.exports = function (io) {
       console.log(conn);
       console.log('source', conn.source, selfNode);
       console.log('target', conn.target, selfNode);
-      if (conn.source.id === selfNode) {
+      if (conn.source === selfNode) {
         var sendNode = null;
         for (var k = 0; k < curConfig.nodes.length; ++k) {
           if (curConfig.nodes[k].id === conn.target) {
@@ -97,7 +97,7 @@ module.exports = function (io) {
         console.log('aoeu', sendNode);
         var iid = createAnAsker(conn, sendNode);
         askers.push(iid);
-      } else if (conn.target.id === selfNode) {
+      } else if (conn.target === selfNode) {
         console.log('htns', conn);
         if (conn.port) {
           var sid = createAServer(conn);
