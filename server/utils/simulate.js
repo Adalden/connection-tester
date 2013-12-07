@@ -84,16 +84,21 @@ module.exports = function (io) {
 
     for (var j = 0; j < curConfig.conns.length; ++j) {
       var conn = curConfig.conns[j];
-      if (conn.source === selfNode) {
+      console.log(conn);
+      console.log('source', conn.source, selfNode);
+      console.log('target', conn.target, selfNode);
+      if (conn.source.id === selfNode) {
         var sendNode = null;
         for (var k = 0; k < curConfig.nodes.length; ++k) {
           if (curConfig.nodes[k].id === conn.target) {
             sendNode = curConfig.nodes[i].id;
           }
         }
+        console.log('aoeu', sendNode);
         var iid = createAnAsker(conn, sendNode);
         askers.push(iid);
-      } else if (conn.target === selfNode) {
+      } else if (conn.target.id === selfNode) {
+        console.log('htns', conn);
         if (conn.port) {
           var sid = createAServer(conn);
           listeners.push(sid);
