@@ -91,7 +91,7 @@ module.exports = function (io) {
         var sendNode = null;
         for (var k = 0; k < curConfig.nodes.length; ++k) {
           if (curConfig.nodes[k].id === conn.target) {
-            sendNode = curConfig.nodes[k].id;
+            sendNode = curConfig.nodes[k];
           }
         }
         console.log('aoeu', sendNode);
