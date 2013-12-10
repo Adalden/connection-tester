@@ -18,7 +18,9 @@ module.exports = {
   list:    list,
   save:    save,
   get:     get,
-  approve: approve
+  approve: approve,
+  _setAll: _setAll,
+  _getAll: _getAll
 };
 
 function get(req, res) {
@@ -79,4 +81,13 @@ function save(req, res) {
 
 function _updateConfigFile(cb) {
   fs.writeFile(__dirname + '/../data/configurations.json', JSON.stringify(configs), cb);
+}
+
+function _setAll(_configs, cb) {
+  configs = _configs;
+  _updateConfigFile(cb);
+}
+
+function _getAll() {
+  return configs;
 }

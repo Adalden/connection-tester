@@ -30,6 +30,7 @@ module.exports = function (io) {
           err: 'Simulation in Progress',
           config: curConfig
         });
+        update();
       } else {
         setupSimulation(config);
         if (!startSimulation()) {
@@ -37,12 +38,13 @@ module.exports = function (io) {
             success: false,
             err: 'Bad Config or IP Not Found'
           });
-          return;
+        } else {
+          socket.broadcast.emit('started', config);
+          update();
+          fn({
+            success: true
+          });
         }
-        socket.broadcast.emit('started', config);
-        fn({
-          success: true
-        });
       }
     });
 

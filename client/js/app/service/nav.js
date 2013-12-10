@@ -43,14 +43,21 @@ nav = [
   },
   {
     name:   'What Is My IP?',
-    modal: true,
+    modal:  true,
     tmpl:   'tmpl/m/ip.html',
     ctrl:   'modalIpCtrl',
     acl:    ['admin', 'engineer', 'tester']
   },
   {
+    name:   'Dev Tools',
+    modal:  true,
+    tmpl:   'tmpl/m/development.html',
+    ctrl:   'modalDevelopmentCtrl',
+    acl:    'admin'
+  },
+  {
     name:   'Help?',
-    modal: true,
+    modal:  true,
     tmpl:   'tmpl/m/help.html',
     ctrl:   'modalHelpCtrl'
   },
