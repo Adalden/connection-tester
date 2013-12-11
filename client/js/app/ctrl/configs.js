@@ -111,8 +111,8 @@ angular.module('app').controller('configsCtrl',
       var conns = _.map($scope.conns, function (conn) {
         return {
           port: conn.port,
-          target: conn.target.id,
-          source: conn.source.id
+          target: getIndexForNode(nodes, conn.target.id),
+          source: getIndexForNode(nodes, conn.source.id)
         };
       });
 
@@ -121,6 +121,14 @@ angular.module('app').controller('configsCtrl',
         nodes: nodes,
         conns: conns
       };
+    }
+
+    function getIndexForNode(nodes, id) {
+      var index;
+      _.each(nodes, function (node, i) {
+        if (node.id === id) index = i;
+      });
+      return index;
     }
 
     function showPrompt(msg, cb) {
