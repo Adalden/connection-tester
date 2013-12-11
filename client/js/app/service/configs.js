@@ -38,12 +38,21 @@ angular.module('app').factory('configs',
       });
     }
 
+    function remove(name, cb) {
+      console.log(name);
+      $http.get('/config/remove/' + name).then(function (resp) {
+        if (!resp.data.success) return cb(resp.data.err);
+        cb();
+      });
+    }
+
     return {
       exists:  exists,
       list:    list,
       save:    save,
       get:     get,
-      approve: approve
+      approve: approve,
+      remove:  remove
     };
   }
 );

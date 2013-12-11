@@ -39,6 +39,16 @@ angular.module('app').controller('configsCtrl',
       ensureSave(openDialog);
     };
 
+    $scope.deleteButton = function () {
+      configs.remove($scope.name, function (err) {
+        if (err) return alerts.create('error', err);
+        $scope.name = '';
+        $scope.nodes = [];
+        $scope.conns = [];
+        alerts.create('success', 'Configuration successfully removed!');
+      });
+    };
+
     function openDialog() {
       createModal('tmpl/m/open.html', 'modalOpenCtrl').then(function (choice) {
         openConfig(choice);

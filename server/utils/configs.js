@@ -19,6 +19,7 @@ module.exports = {
   save:    save,
   get:     get,
   approve: approve,
+  remove:  remove,
   _setAll: _setAll,
   _getAll: _getAll
 };
@@ -69,6 +70,17 @@ function save(req, res) {
 
   _updateConfigFile(function (err) {
     if (err) return res.fail(err);
+    res.send({
+      success: true
+    });
+  });
+}
+
+function remove(req, res) {
+  if (configs[req.params.name]) {
+    delete configs[req.params.name];
+  }
+  _updateConfigFile(function () {
     res.send({
       success: true
     });

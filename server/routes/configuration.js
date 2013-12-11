@@ -36,4 +36,10 @@ module.exports = function (app) {
     hasACL('engineer'),
     config.exists
   );
+
+  app.get('/config/remove/:name',
+    loggedIn,
+    hasACL('admin'),
+    config.remove
+  );
 };
