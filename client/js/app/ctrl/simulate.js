@@ -1,12 +1,14 @@
 /* global angular, $, _ */
 
 angular.module('app').controller('simulateCtrl',
-  function ($scope, $timeout, configs, alerts, socket){
+  function ($scope, $timeout, $modal, configs, alerts, socket){
     'use strict';
     $scope.nodes      = [];
     $scope.conns      = [];
     $scope.configList = [];
     $scope.running    = false;
+
+    var aliveList = [];
 
     configs.list(function (err, res) {
       if (err) return alerts.create('error', 'Failed to get configurations!');
@@ -30,6 +32,21 @@ angular.module('app').controller('simulateCtrl',
         setNewConfig(status.config.name);
       }
     });
+
+    $scope.showReport = function () {
+      $modal.open({
+        templateUrl: 'tmpl/m/report.html',
+        controller: 'modalReportCtrl',
+        resolve: {
+          alives: function () {
+            return aliveList;
+          },
+          aConfig: function () {
+            return $scope.curConfig;
+          }
+        }
+      });
+    };
 
     $scope.getConfig = function (selected) {
       configs.get(selected, function (err, res) {
@@ -83,9 +100,11 @@ angular.module('app').controller('simulateCtrl',
 
     socket.on('stopped', function() {
       $scope.running = false;
+      aliveList.length = 0;
     });
 
     function updateNodes(nodes) {
+      aliveList = nodes;
       nodes.forEach(function (node) {
         $('.simulate-config #node-' + node).css({
           'stroke':  'green',

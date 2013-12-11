@@ -1,0 +1,16 @@
+<div class="modal-header">
+  <h3>Report</h3>
+</div>
+<div class="modal-body">
+  <h3>Alive Nodes:</h3>
+  <pre>
+    {{alives | json}}
+  </pre>
+  <h3>Config Layout:</h3>
+  <pre>
+    {{config | json}}
+  </pre>
+</div>
+<div class="modal-footer">
+  <button class="btn" ng-click="close()">Cancel</button>
+</div>
