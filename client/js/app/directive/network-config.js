@@ -136,6 +136,7 @@ angular.module('app').directive('networkConfig',
           .style('marker-start', '')
           .style('marker-end', 'url(#end-arrow)')
           .on('mousedown', function (d) {
+            if (scope.frozen) return;
             if (!scope.editable) {
               if (d === selected_link) selected_link = null;
               else selected_link = d;
@@ -179,16 +180,19 @@ angular.module('app').directive('networkConfig',
           .style('fill', function (d) { return (d === selected_node) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id); })
           .style('stroke', function (d) { return d3.rgb(colors(d.id)).darker().toString(); })
           .on('mouseover', function (d) {
+            if (scope.frozen) return;
             if (!scope.editable) return;
             if (!mousedown_node || d === mousedown_node) return;
             d3.select(this).attr('transform', 'scale(1.1)');
           })
           .on('mouseout', function (d) {
+            if (scope.frozen) return;
             if (!scope.editable) return;
             if (!mousedown_node || d === mousedown_node) return;
             d3.select(this).attr('transform', '');
           })
           .on('mousedown', function (d) {
+            if (scope.frozen) return;
             if (!scope.editable) {
               if (d === selected_node) selected_node = null;
               else selected_node = d;
@@ -218,6 +222,7 @@ angular.module('app').directive('networkConfig',
             restart();
           })
           .on('mouseup', function (d) {
+            if (scope.frozen) return;
             if (!scope.editable) return;
             if (!mousedown_node) return;
 
@@ -262,6 +267,18 @@ angular.module('app').directive('networkConfig',
             .attr('y', 4)
             .attr('class', 'id')
             .text(function (d) { return d.id; });
+
+        if (scope.frozen) {
+          g.append('svg:text')
+              .attr('x', -10)
+              .attr('y', -25)
+              .text(function (d) { return d.name; });
+
+          g.append('svg:text')
+              .attr('x', -10)
+              .attr('y', -15)
+              .text(function (d) { return d.ip; });
+        }
 
         // remove old nodes
         circle.exit().remove();
@@ -333,7 +350,7 @@ angular.module('app').directive('networkConfig',
       }
 
       // app starts here
-      if (scope.editable) {
+      if (scope.editable && !scope.frozen) {
         svg.on('mousedown', mousedown)
           .on('mousemove', mousemove)
           .on('mouseup', mouseup);
@@ -350,6 +367,7 @@ angular.module('app').directive('networkConfig',
     scope: {
       nodes: '=',
       conns: '=',
+      frozen: '=',
       editable: '=',
       unsavedChanges: '=',
 
