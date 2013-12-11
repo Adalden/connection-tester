@@ -1,4 +1,4 @@
-/* global angular, $ */
+/* global angular, $, _ */
 
 angular.module('app').controller('simulateCtrl',
   function ($scope, $timeout, configs, alerts, socket){
@@ -8,9 +8,20 @@ angular.module('app').controller('simulateCtrl',
     $scope.configList = [];
     $scope.running    = false;
 
-    configs.list(function(err, res) {
+    configs.list(function (err, res) {
       if (err) return alerts.create('error', 'Failed to get configurations!');
       $scope.configList = res;
+
+
+      $scope.configList = [];
+      _.each(res, function (configName) {
+        configs.get(configName, function (err, config) {
+          if (config.approved) {
+            $scope.configList.push(configName);
+          }
+        });
+      });
+
     });
 
     socket.emit('status', '', function (status) {
